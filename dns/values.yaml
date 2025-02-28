@@ -5,17 +5,24 @@ serviceType: "LoadBalancer"
 # service dns externe
 isClusterService: false
 
+service:
+  clusterIP: "" # éviter d'interférer avec le réseau interne
+  externalTrafficPolicy: Local
+
 # configuration CoreDNS
 servers:
   - zones:
-      - zone: .
-    port: 53
+      - zone: ici
+    port: 5353
     plugins:
       - name: errors
       - name: health
       - name: ready
+      - name: file
+        parameters: /etc/coredns/ici.db ici
       - name: forward
-        parameters: . /etc/resolv.conf
+        # transférer au routeur puis aux serveurs DNS Vidéotron
+        parameters: . 192.168.50.1 24.200.241.37 24.201.245.77 24.200.243.189
       - name: cache
         parameters: 30
 
@@ -23,9 +30,25 @@ zoneFiles:
   - filename: ici.db
     domain: ici
     contents: |
-      arcade.ici.  IN    A    192.168.50.247
-      ai.ici.      IN    A    192.168.50.247
-      ia.ici.      IN    A    192.168.50.247
-      motel.ici.   IN    A    192.168.50.185
-      cloud.ici.   IN    A    192.168.50.185
-      nuage.ici.   IN    A    192.168.50.185
+      $ORIGIN ici.
+      $TTL 3600
+      @       IN      SOA     ns.ici. admin.ici. (
+                              2024030901  ; Serial
+                              7200        ; Refresh
+                              3600        ; Retry
+                              1209600     ; Expire
+                              3600 )      ; Negative Cache TTL
+
+      @           IN      NS      ns.ici.
+      ns          IN      A       192.168.50.247 ; cluster k3s
+
+      arcade      IN      A       192.168.50.185
+      ai          IN      CNAME   arcade.ici.
+      ia          IN      CNAME   arcade.ici.
+
+      motel       IN      A       192.168.50.247
+      cloud       IN      CNAME   motel.ici.
+      kubernetes  IN      CNAME   motel.ici.
+      nuage       IN      CNAME   motel.ici.
+
+      routeur     IN      A       192.168.50.1
