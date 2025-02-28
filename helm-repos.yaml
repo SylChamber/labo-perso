@@ -1,0 +1,7 @@
+# Dépôts helm
+- name: open-webui
+  url: https://open-webui.github.io/helm-charts
+- name: nextcloud
+  url: https://nextcloud.github.io/helm/
+- name: coredns
+  url: https://coredns.github.io/helm
