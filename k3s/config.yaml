@@ -1,0 +1,7 @@
+# configuration K3s
+secrets-encryption: true
+tls-san:
+  - kubernetes.ici
+  - cloud.ici
+  - nuage.ici
+  - motel.ici
