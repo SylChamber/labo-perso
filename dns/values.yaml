@@ -1,0 +1,31 @@
+# Déploiement CoreDNS comme DNS externe pour réseau local
+
+serviceType: "LoadBalancer"
+
+# service dns externe
+isClusterService: false
+
+# configuration CoreDNS
+servers:
+  - zones:
+      - zone: .
+    port: 53
+    plugins:
+      - name: errors
+      - name: health
+      - name: ready
+      - name: forward
+        parameters: . /etc/resolv.conf
+      - name: cache
+        parameters: 30
+
+zoneFiles:
+  - filename: ici.db
+    domain: ici
+    contents: |
+      arcade.ici.  IN    A    192.168.50.247
+      ai.ici.      IN    A    192.168.50.247
+      ia.ici.      IN    A    192.168.50.247
+      motel.ici.   IN    A    192.168.50.185
+      cloud.ici.   IN    A    192.168.50.185
+      nuage.ici.   IN    A    192.168.50.185
