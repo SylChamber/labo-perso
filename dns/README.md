@@ -101,7 +101,7 @@ On peut tester la syntaxe de la configuration en extrayant les valeurs du `zoneF
 
 ```shell
 sudo apt install bind9-utils
-named-checkzone ici ici.db
+named-checkzone rloc rloc.db
 ```
 
 Pour tester la résolution de noms, il faut utiliser `dig`:
@@ -109,7 +109,7 @@ Pour tester la résolution de noms, il faut utiliser `dig`:
 > Ou encore `nslookup` dans les conteneurs `busybox:1.28`.
 
 ```shell
-dig @192.168.50.247 motel.ici
+dig @192.168.50.247 motel.rloc
 ```
 
 ## Références

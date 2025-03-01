@@ -20,7 +20,7 @@ servers:
       - name: health
       - name: ready
       - name: file
-        parameters: /etc/coredns/ici.db ici
+        parameters: /etc/coredns/rloc.db rloc
       - name: forward
         # transférer au routeur puis aux serveurs DNS Vidéotron
         parameters: . 24.200.241.37 24.201.245.77
@@ -28,28 +28,28 @@ servers:
         parameters: 30
 
 zoneFiles:
-  - filename: ici.db
-    domain: ici
+  - filename: rloc.db
+    domain: rloc
     contents: |
-      $ORIGIN ici.
+      $ORIGIN rloc.
       $TTL 3600
-      @       IN      SOA     ns.ici. admin.ici. (
+      @       IN      SOA     ns.rloc. admin.rloc. (
                               2024030901  ; Serial
                               7200        ; Refresh
                               3600        ; Retry
                               1209600     ; Expire
                               3600 )      ; Negative Cache TTL
 
-      @           IN      NS      ns.ici.
+      @           IN      NS      ns.rloc.
       ns          IN      A       192.168.50.247 ; cluster k3s
 
       arcade      IN      A       192.168.50.185
-      ai          IN      CNAME   arcade.ici.
-      ia          IN      CNAME   arcade.ici.
+      ai          IN      CNAME   arcade.rloc.
+      ia          IN      CNAME   arcade.rloc.
 
       motel       IN      A       192.168.50.247
-      cloud       IN      CNAME   motel.ici.
-      kubernetes  IN      CNAME   motel.ici.
-      nuage       IN      CNAME   motel.ici.
+      cloud       IN      CNAME   motel.rloc.
+      kubernetes  IN      CNAME   motel.rloc.
+      nuage       IN      CNAME   motel.rloc.
 
       routeur     IN      A       192.168.50.1
