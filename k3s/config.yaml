@@ -1,7 +1,0 @@
-# configuration K3s
-secrets-encryption: true
-tls-san:
-  - kubernetes.rloc
-  - cloud.rloc
-  - nuage.rloc
-  - motel.rloc

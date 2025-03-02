@@ -1,0 +1,10 @@
+# configuration K3s
+secrets-encryption: true
+tls-san:
+  - kubernetes.rloc
+  - cloud.rloc
+  - nuage.rloc
+  - motel.rloc
+kube-apiserver-arg:
+  # Activer l'ajout automatique des tolérances de ressources étendues, ex. nvidia.com/gpu
+  - enable-admission-plugins=ExtendedResourceToleration

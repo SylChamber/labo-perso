@@ -5,3 +5,5 @@
   url: https://nextcloud.github.io/helm/
 - name: coredns
   url: https://coredns.github.io/helm
+- name: nvidia-device-plugin
+  url: https://nvidia.github.io/k8s-device-plugin

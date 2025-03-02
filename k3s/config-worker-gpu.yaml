@@ -1,0 +1,8 @@
+# configuration d'un agent, un worker k3s
+server: https://kubernetes.rloc:6443
+token-file: /etc/rancher/k3s/node-token
+secrets-encryption: true
+node-label:
+  - gpu=nvidia
+node-taint:
+  - nvidia.com/gpu:NoSchedule
