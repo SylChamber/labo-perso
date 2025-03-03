@@ -1,8 +1,12 @@
 # configuration d'un agent, un worker k3s
 server: https://kubernetes.rloc:6443
 token-file: /etc/rancher/k3s/node-token
-secrets-encryption: true
+default-runtime: nvidia
 node-label:
   - gpu=nvidia
-node-taint:
-  - nvidia.com/gpu:NoSchedule
+  - node-role.kubernetes.io/gpu=true
+  - node-role.kubernetes.io/worker=true
+# appliquer le taint après la configuration de l'agent et le déploiement
+# du NVIDIA device plugin, et de Node Feature Discovery
+# node-taint:
+#   - nvidia.com/gpu:NoSchedule

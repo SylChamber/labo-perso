@@ -68,22 +68,65 @@ Sun Mar  2 14:41:34 2025
 +-----------------------------------------+------------------------+----------------------+
 ```
 
+## Configuration de containerd
+
+La documentation indique d'utiliser `nvidia-ctk` pour configurer `containerd` pour utiliser les GPUs NVIDIA dans Kubernetes:
+
+```shell
+sudo nvidia-ctk runtime configure --runtime=containerd
+sudo systemctl restart containerd
+```
+
+Toutefois, cette commande configure `containerd` sous `/etc/containerd/config.toml`, alors que `k3s` dispose de sa propre configuration dans `/var/lib/rancher/k3s/agent/etc/containerd/config.toml`.
+
+Les versions récentes de `k3s` permettent de spécifier le runtime par défaut à l'aide de l'argument `--default-runtime` (ou de l'option équivalente du `config.yaml`) lors du lancement de `k3s`. S'assurer de l'inclure dans la configuration de l'agent et de redémarrer `k3s` pour prendre en compte les modifications.
+
+```shell
+sudo systemctl restart k3s-agent
+```
+
 ## Ajout du support des GPUs NVIDIA à k3s
 
 Premièrement, installer le NVIDIA Device Plugin permettant d'identifier les GPUs NVIDIA disponibles sur le système.
 
 ```shell
-helm repo add nvidia-device-plugin https://nvidia.github.io/k8s-device-plugin
-helm install nvidia-device-plugin nvidia-device-plugin/nvidia-device-plugin \
-  --namespace nvidia-device-plugin --create-namespace
+helm repo add nvdp https://nvidia.github.io/k8s-device-plugin
+helm install nvidia-device-plugin nvdp/nvidia-device-plugin \
+  --namespace nvidia-device-plugin \
+  --create-namespace \
+  --set gfd.enabled=true
 ```
+
+> `gfd.enabled=true` permet d'utiliser [Node Feature Discovery](https://kubernetes-sigs.github.io/node-feature-discovery/stable/get-started/index.html) pour détecter les GPUs NVIDIA disponibles sur le système.
+
+Vérifier le fonctionnement du _device plugin_ NVIDIA:
+
+```shell
+> kubectl get node arcade -o jsonpath='{.status.allocatable.nvidia\.com/gpu}'
+1
+```
+
+Il suffira ensuite, pour planifier des pods sur le nœud à GPU, de requérir `nvidia.com/gpu: 1` dans les déploiements.
+
+## Restreindre la planification sur le nœud à GPU
+
+Une fois que le _device plugin_ NVIDIA est installé, restreindre la planification des pods sur le nœud à GPU en teintant le nœud avec l'`Extended Resource Name` du GPU, `nvidia.com/gpu`:
+
+```shell
+> kubectl taint node arcade nvidia.com/gpu:NoSchedule
+```
+S'assurer d'avoir activé le _admission controller_ `ExtendedResourceToleration` pour que les pods puissent être planifiés sur le nœud à GPU. Ce contrôleur s'assurera que les pods demandant un GPU puissent être planifiés sur le nœud à GPU en ajoutant automatiquement la tolérance correspondante.
 
 ## Références
 
 * [Deploying Nvidia GPU Workloads with k3s: A Comprehensive Guide](https://support.tools/deploying-nvidia-gpu-workloads-with-k3s/)
 * [NVIDIA Device Plugin for Kubernetes](https://github.com/NVIDIA/k8s-device-plugin)
+* [Installing the NVIDIA Container Toolkit - Configuration](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#configuration)
+* [Alternative Container Runtime Support - k3s Docs](https://docs.k3s.io/advanced?_highlight=gpu#alternative-container-runtime-support)
 * [Setting up Nvidia drivers for k3s](https://support.tools/post/nvidia-gpus-on-k3s/)
 * [Add NVIDIA GPU support to k3s with containerd](https://dev.to/mweibel/add-nvidia-gpu-support-to-k3s-with-containerd-4j17)
 * [Enabling NVIDIA GPUs on K3s for CUDA workloads](https://itnext.io/enabling-nvidia-gpus-on-k3s-for-cuda-workloads-a11b96f967b0)
 * [Running CUDA workloads - k3d Docs](https://k3d.io/v5.8.3/usage/advanced/cuda/)
 * [Schedule GPUs - Kubernetes Docs](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/)
+* [Node Feature Discovery](https://kubernetes-sigs.github.io/node-feature-discovery/stable/get-started/index.html)
+* [Admission Control in Kubernetes - ExtendedResourceToleration - Kubernetes Docs](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#extendedresourcetoleration)

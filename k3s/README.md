@@ -36,7 +36,7 @@ Ensuite, installer k3s à l'aide du fichier de configuration:
 curl -sfL https://get.k3s.io | sh
 ```
 
-## Ajout d'un noœud
+## Ajout d'un noœud à GPU
 
 Avant d'ajouter un nœud, [déployer le serveur DNS du réseau local](../dns/README.md) afin de bénéficier de la résolution de nom sur le réseau local.
 
@@ -50,12 +50,13 @@ cat << EOF | sudo tee /etc/rancher/k3s/config.yaml
 # configuration d'un agent, un worker k3s
 server: https://kubernetes.rloc:6443
 token-file: /etc/rancher/k3s/node-token
+default-runtime: nvidia
 node-label:
-  - "gpu=nvidia"
-node-taint:
-  - "nvidia.com/gpu:NoSchedule"
+  - gpu=nvidia
 EOF
 ```
+
+> On spécifie ici le runtime par défaut comme étant `nvidia` afin de supporter l'utilisation du GPU pour exécuter des charges de travail GPU.
 
 Copier le token du serveur pour l'inscription d'agents: `/var/lib/rancher/k3s/server/node-token` et le coller dans `/etc/rancher/k3s/node-token`.
 
