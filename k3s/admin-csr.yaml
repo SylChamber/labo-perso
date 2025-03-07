@@ -1,0 +1,13 @@
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+  name: sylvain
+spec:
+  request: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlIbk1JR05BZ0VBTUNzeEVEQU9CZ05WQkFNTUIzTjViSFpoYVc0eEZ6QVZCZ05WQkFvTURtTnNkWE4wWlhJdApZV1J0YVc1ek1Ga3dFd1lIS29aSXpqMENBUVlJS29aSXpqMERBUWNEUWdBRWM1NWozSjNxMGxFdXNueTQxdG82ClpNbFBjTnQ0QktoRWFUUG1uL0tqWjA5NnF3WTMzbmtQN0ZFeGlCeVlvYTI4WHB5UlF0RmQ4QUkzZTM2endBVEYKSTZBQU1Bb0dDQ3FHU000OUJBTUNBMGtBTUVZQ0lRRGxVbXJaOURFZ0Z0TlJxNlBzdEpvS3A4L1kxOXA1L0FtVQo1Z2kxU2hhVTJRSWhBTTBsVng1OXAvU1JSd3EvSHRCbG5WdFJNMUc5MHRWcGpCMGNTR3JNdWtLYwotLS0tLUVORCBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0K
+  signerName: kubernetes.io/kube-apiserver-client
+  # k3s limite la durée à 1 an, et donne cette durée par défaut
+  # expirationSeconds:
+  usages:
+    - client auth
+    - digital signature
+    - key encipherment
