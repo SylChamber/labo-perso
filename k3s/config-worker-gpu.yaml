@@ -4,8 +4,11 @@ token-file: /etc/rancher/k3s/node-token
 default-runtime: nvidia
 node-label:
   - gpu=nvidia
-  - node-role.kubernetes.io/gpu=true
-  - node-role.kubernetes.io/worker=true
+  # l'ajout de ces labels empêche le démarrage de k3s avec l'erreur
+  #   Error: failed to validate kubelet flags: unknown 'kubernetes.io' or 'k8s.io'
+  #   labels specified with --node-labels
+  # - node-role.kubernetes.io/gpu=true
+  # - node-role.kubernetes.io/worker=true
 # appliquer le taint après la configuration de l'agent et le déploiement
 # du NVIDIA device plugin, et de Node Feature Discovery
 # node-taint:
