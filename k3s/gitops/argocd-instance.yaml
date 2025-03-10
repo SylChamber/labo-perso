@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1beta1
+kind: ArgoCD
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  server:
+    host: gitops.rloc
+    grpc:
+      ingress:
+        enabled: true
+    ingress:
+      enabled: true
+      ingressClassName: traefik
+      tls:
+        - hosts:
+            - argocd.localhost
+            - argocd.rloc
+            - gitops.localhost
+            - gitops.rloc
+    insecure: true
