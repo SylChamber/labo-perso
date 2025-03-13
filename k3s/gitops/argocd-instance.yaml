@@ -4,6 +4,12 @@ metadata:
   name: argocd
   namespace: argocd
 spec:
+  extraConfig:
+    # gérer le mot de passe avec la cli argocd
+    accounts.sylvain: apiKey, login
+  rbac:
+    policy: |
+      g, sylvain, role:admin
   server:
     host: gitops.rloc
     grpc:
