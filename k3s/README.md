@@ -195,6 +195,7 @@ Après tout, dans cette situation, on désire une image d'OS qui inclut `k3s` ma
 * on peut ajouter des composantes à déployer dans `/var/lib/rancher/k3s/server/manifests`
   * ce peut être des [HelmChartConfigs](https://docs.k3s.io/helm#customizing-packaged-components-with-helmchartconfig)
   * inclure [Operator Lifecycle Manager (OLM) v1](https://github.com/operator-framework/operator-controller) (_Operator Controller_ et _Catalogd_, le successeur de Operator Lifecycle Manager (OLM v0)
+  * et `cert-manager`, dont OLM v1 dépend
 * on crée manuellement les services et on les active
 * on laisse le soin aux utilisateurs de l'image de configurer les options spécifiques dans `/etc/rancher/k3s/config.yaml.d/*.yaml` (à déterminer comment faire, s'il est possible de le faire dans le fichier _ignition_)
   * ou encore des `CertificateSigningRequest`s dans `/var/lib/rancher/k3s/server/manifests`
