@@ -179,6 +179,22 @@ Références:
 
 * [openssl - man page](https://manned.org/man/ubuntu-noble/openssl)
 
+## Installation dans un OS atomique de la famille Fedora Core OS
+
+Pour installation dans un OS de type Fedora Core OS ou uCore (qui en dérive) où le système de fichiers est immuable, il est préférable de ne pas utiliser le logiciel d'installation de `k3s` car ce dernier fait surtout de la configuration (en plus d'installer des prérequis au besoin, comme la [politique SELinux](https://docs.k3s.io/advanced#selinux-support) sous la famille Red Hat).
+
+Après tout, dans cette situation, on désire une image d'OS qui inclut `k3s` mais qui permet de le configurer. Il faut donc reproduire les étapes du script d'installation. On peut suivre cette approche:
+
+* on se limite à installer les prérequis:
+  * `container-selinux` est déjà installé;
+  * `selinux-policy-base` listé dans la documentation de `k3s` n'existe pas, donc à vérifier;
+  * `k3s-selinux` disponible sur [github.com/k3s-io/k3s-selinux](https://github.com/k3s-io/k3s-selinux) (politique SELinux)
+* on télécharge directement le binaire de `k3s` et on l'installe à l'endroit approprié (en accord avec la politique SELinux)
+* on crée les dossiers requis avec les bonnes permissions
+* on configure les options par défaut dans `/etc/rancher/k3s/config.yaml`
+* on crée manuellement les services et on les active
+* on laisse le soin aux utilisateurs de l'image de configurer les options spécifiques dans `/etc/rancher/k3s/config.yaml.d/*.yaml` (à déterminer comment faire, s'il est possible de le faire dans le fichier _ignition_)
+
 ## Références
 
 * [Documentation officielle de k3s](https://docs.k3s.io/)
