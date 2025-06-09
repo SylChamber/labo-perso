@@ -179,9 +179,9 @@ Références:
 
 * [openssl - man page](https://manned.org/man/ubuntu-noble/openssl)
 
-## Installation dans un OS atomique de la famille Fedora Core OS
+## Installation dans un OS atomique
 
-Pour installation dans un OS de type Fedora Core OS ou uCore (qui en dérive) où le système de fichiers est immuable, il est préférable de ne pas utiliser le logiciel d'installation de `k3s` car ce dernier fait surtout de la configuration (en plus d'installer des prérequis au besoin, comme la [politique SELinux](https://docs.k3s.io/advanced#selinux-support) sous la famille Red Hat).
+Pour installation dans un OS de type Fedora Core OS ou bootc où le système de fichiers est immuable, il est préférable de ne pas utiliser le logiciel d'installation de `k3s` car ce dernier fait surtout de la configuration (en plus d'installer des prérequis au besoin, comme la [politique SELinux](https://docs.k3s.io/advanced#selinux-support) sous la famille Red Hat).
 
 Après tout, dans cette situation, on désire une image d'OS qui inclut `k3s` mais qui permet de le configurer. Il faut donc reproduire les étapes du script d'installation. On peut suivre cette approche:
 
@@ -191,14 +191,20 @@ Après tout, dans cette situation, on désire une image d'OS qui inclut `k3s` ma
   * `k3s-selinux` disponible sur [github.com/k3s-io/k3s-selinux](https://github.com/k3s-io/k3s-selinux) (politique SELinux)
 * on télécharge directement le binaire de `k3s` et on l'installe à l'endroit approprié (en accord avec la politique SELinux)
 * on crée les dossiers requis avec les bonnes permissions
-* on configure les options par défaut dans `/etc/rancher/k3s/config.yaml`
+* `/etc` et `/var` sont persistants et modifiables
+  * alors on n'y installe rien, puisqu'ils seront copiés à l'installation initiale
+  * toute mise à jour système subséquente ne verra pas de nouveaux changements
+* placer la configuration sous `/usr` (voir la [doc bootc sur la configuration](https://bootc-dev.github.io/bootc/building/guidance.html#configuration-in-usr-vs-etc)) et faire un symlink sous `/etc`
+  * ça nécessite toutefois d'ajuster les politiques SELinux
+* on configure les options par défaut dans `/etc/rancher/k3s/config.yaml` (symlink)
+* utiliser `/var` pour les données de `k3s`
 * on peut ajouter des composantes à déployer dans `/var/lib/rancher/k3s/server/manifests`
   * ce peut être des [HelmChartConfigs](https://docs.k3s.io/helm#customizing-packaged-components-with-helmchartconfig)
   * inclure [Operator Lifecycle Manager (OLM) v1](https://github.com/operator-framework/operator-controller) (_Operator Controller_ et _Catalogd_, le successeur de Operator Lifecycle Manager (OLM v0)
   * et `cert-manager`, dont OLM v1 dépend
 * on crée manuellement les services et on les active
-* on laisse le soin aux utilisateurs de l'image de configurer les options spécifiques dans `/etc/rancher/k3s/config.yaml.d/*.yaml` (à déterminer comment faire, s'il est possible de le faire dans le fichier _ignition_)
-  * ou encore des `CertificateSigningRequest`s dans `/var/lib/rancher/k3s/server/manifests`
+* on laisse le soin aux utilisateurs de l'image de configurer les options spécifiques dans `/etc/rancher/k3s/config.yaml.d/*.yaml`
+  * ou encore des `CertificateSigningRequest`s dans `/var/lib/rancher/k3s/server/manifests` (symlink)
   * vérifier si on peut ajouter des manifestes d'opérateurs, comme Argo CD
 
 ## Références
@@ -212,3 +218,4 @@ Après tout, dans cette situation, on désire une image d'OS qui inclut `k3s` ma
 * [Schedule GPUs - Kubernetes Docs](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/)
 * [Operator Lifecycle Manager (OLM) v1](https://github.com/operator-framework/operator-controller)
 * [OLM v1 releases - operator-framework/operator-controller](https://github.com/operator-framework/operator-controller/releases)
+* [Building Images - bootc](https://bootc-dev.github.io/bootc/building/guidance.html)
