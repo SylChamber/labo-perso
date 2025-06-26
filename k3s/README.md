@@ -190,19 +190,26 @@ Après tout, dans cette situation, on désire une image d'OS qui inclut `k3s` ma
   * `selinux-policy-base` listé dans la documentation de `k3s` n'existe pas, donc à vérifier;
   * `k3s-selinux` disponible sur [github.com/k3s-io/k3s-selinux](https://github.com/k3s-io/k3s-selinux) (politique SELinux)
 * on télécharge directement le binaire de `k3s` et on l'installe à l'endroit approprié (en accord avec la politique SELinux)
-* on crée les dossiers requis avec les bonnes permissions
-* `/etc` et `/var` sont persistants et modifiables
+  * en fait, le script d'installation permet de spécifier les emplacements:
+    * des binaires (par défaut, `/usr/local/bin`): indiquer `/usr/bin`
+    * des services systemd (par défaut, `/etc/systemd/system`): indiquer `/usr/lib/systemd/system`
+* on crée les dossiers requis avec les bonnes permissions (inutile avec le script)
+* `/etc`, `/var` et `/usr/local` sont persistants et modifiables et réservés à l'utilisateur
+  * `/usr/local` est un symlink vers `/var/usrlocal`
   * alors on n'y installe rien, puisqu'ils seront copiés à l'installation initiale
-  * toute mise à jour système subséquente ne verra pas de nouveaux changements
+  * toute mise à jour système subséquente ne verra pas de nouveaux changements (`/etc` est soumis à une fusion tri-partite)
 * placer la configuration sous `/usr` (voir la [doc bootc sur la configuration](https://bootc-dev.github.io/bootc/building/guidance.html#configuration-in-usr-vs-etc)) et faire un symlink sous `/etc`
   * ça nécessite toutefois d'ajuster les politiques SELinux
-* on configure les options par défaut dans `/etc/rancher/k3s/config.yaml` (symlink)
+* on configure les options par défaut dans `/etc/rancher/k3s/config.yaml`
+  * symlink vers `/usr/lib/rancher/k3s/`?
 * utiliser `/var` pour les données de `k3s`
+  * en fait, c'est k3s lui-même qui semble créer les fichiers sous `/var/lib/rancher`
 * on peut ajouter des composantes à déployer dans `/var/lib/rancher/k3s/server/manifests`
   * ce peut être des [HelmChartConfigs](https://docs.k3s.io/helm#customizing-packaged-components-with-helmchartconfig)
   * inclure [Operator Lifecycle Manager (OLM) v1](https://github.com/operator-framework/operator-controller) (_Operator Controller_ et _Catalogd_, le successeur de Operator Lifecycle Manager (OLM v0)
   * et `cert-manager`, dont OLM v1 dépend
 * on crée manuellement les services et on les active
+  * en fait, le script peut s'en charger puisqu'on peut lui spécifier où les créer
 * on laisse le soin aux utilisateurs de l'image de configurer les options spécifiques dans `/etc/rancher/k3s/config.yaml.d/*.yaml`
   * ou encore des `CertificateSigningRequest`s dans `/var/lib/rancher/k3s/server/manifests` (symlink)
   * vérifier si on peut ajouter des manifestes d'opérateurs, comme Argo CD
@@ -211,6 +218,7 @@ Après tout, dans cette situation, on désire une image d'OS qui inclut `k3s` ma
 
 * [Documentation officielle de k3s](https://docs.k3s.io/)
 * [Configuration Options - k3s Docs](https://docs.k3s.io/installation/configuration)
+  * [Multiple Config Files - Configuration Options - k3s Docs](https://docs.k3s.io/installation/configuration?_highlight=config.yaml.d#multiple-config-files)
 * [Upgrades - k3s Docs](https://docs.k3s.io/upgrades)
 * [Taints and Tolerations - Example Use Cases - Kubernetes Docs](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#example-use-cases)
 * [Resource Management for Pods and Containers - Extended resources - Kubernetes Docs](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#extended-resources)
