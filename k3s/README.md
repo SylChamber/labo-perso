@@ -200,14 +200,15 @@ Après tout, dans cette situation, on désire une image d'OS qui inclut `k3s` ma
   * toute mise à jour système subséquente ne verra pas de nouveaux changements (`/etc` est soumis à une fusion tri-partite)
 * placer la configuration sous `/usr` (voir la [doc bootc sur la configuration](https://bootc-dev.github.io/bootc/building/guidance.html#configuration-in-usr-vs-etc)) et faire un symlink sous `/etc`
   * ça nécessite toutefois d'ajuster les politiques SELinux
-* on configure les options par défaut dans `/etc/rancher/k3s/config.yaml`
-  * symlink vers `/usr/lib/rancher/k3s/`?
+* on configure les options par défaut dans `/usr/lib/rancher/k3s/config.yaml`
+  * avec un symlink dans `/etc/rancher/k3s/config.yaml`
 * utiliser `/var` pour les données de `k3s`
   * en fait, c'est k3s lui-même qui semble créer les fichiers sous `/var/lib/rancher`
 * on peut ajouter des composantes à déployer dans `/var/lib/rancher/k3s/server/manifests`
   * ce peut être des [HelmChartConfigs](https://docs.k3s.io/helm#customizing-packaged-components-with-helmchartconfig)
   * inclure [Operator Lifecycle Manager (OLM) v1](https://github.com/operator-framework/operator-controller) (_Operator Controller_ et _Catalogd_, le successeur de Operator Lifecycle Manager (OLM v0)
   * et `cert-manager`, dont OLM v1 dépend
+  * on peut les définir sous `/usr/lib/rancher/k3s/server/manifests` et les lier dans `/var/lib`
 * on crée manuellement les services et on les active
   * en fait, le script peut s'en charger puisqu'on peut lui spécifier où les créer
 * on laisse le soin aux utilisateurs de l'image de configurer les options spécifiques dans `/etc/rancher/k3s/config.yaml.d/*.yaml`
