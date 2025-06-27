@@ -215,6 +215,34 @@ Après tout, dans cette situation, on désire une image d'OS qui inclut `k3s` ma
   * ou encore des `CertificateSigningRequest`s dans `/var/lib/rancher/k3s/server/manifests` (symlink)
   * vérifier si on peut ajouter des manifestes d'opérateurs, comme Argo CD
 
+Voici les instructions shell pour l'installer avec les directives ci-dessus dans AlmaLinux 9 installé avec LibVirt:
+
+```shell
+TMP_DIR=$(mktemp -d /tmp/k3s-install-XXXXXX)
+cd $TMP_DIR
+curl -sfLo install-k3s.sh https://get.k3s.io
+chmod +x ./install-k3s.sh
+sudo mkdir -p /etc/rancher/k3s
+sudo mkdir -p /usr/lib/rancher/k3s
+cat << EOF | sudo tee /usr/lib/rancher/k3s/config.yaml
+# configuration K3s
+secrets-encryption: true
+tls-san:
+  - k3s.rloc
+  - kubernetes.rloc
+kube-apiserver-arg:
+  # Activer l'ajout automatique des tolérances de ressources étendues, ex. nvidia.com/gpu
+  - enable-admission-plugins=ExtendedResourceToleration
+EOF
+sudo ln -s /usr/lib/rancher/k3s/config.yaml /etc/rancher/k3s/config.yaml
+
+INSTALL_K3S_BIN_DIR=/usr/bin \
+INSTALL_K3S_SYSTEMD_DIR=/usr/lib/systemd/system \
+./install-k3s.sh
+# sauvegarder le jeton 'TOKEN' `/var/lib/rancher/k3s/server/token`
+# requis pour joindre des nœuds (agents)
+```
+
 ## Références
 
 * [Documentation officielle de k3s](https://docs.k3s.io/)
