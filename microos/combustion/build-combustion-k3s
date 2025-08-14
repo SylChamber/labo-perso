@@ -1,0 +1,48 @@
+#!/usr/bin/bash
+# Construit un fichier _combustion_ pour la configuration d'openSUSE MicroOS/Leap Micro
+# https://documentation.suse.com/sle-micro/6.1/html/Micro-deployment-raw-images/index.html
+# Basé sur https://en.opensuse.org/SDB:K3s_cluster_deployment_on_MicroOS
+
+set -euo pipefail
+SCRIPT_DIR=$(dirname "$0")
+
+>&2 echo "Ce script va générer un fichier combustion pour configurer l'installation d'openSUSE MicroOS/Leap Micro.
+"
+
+# Demander un mot de passe root
+read -sp "Veuillez saisir un mot de passe pour le compte root: " ROOT_PASSWORD
+>&2 echo
+
+# Demander un nom d'utilisateur
+read -p "Veuillez saisir un nom d'utilisateur à ajouter au système: " USERNAME
+read -sp "Veuillez saisir un mot de passe pour cet utilisateur: " USER_PASSWORD
+>&2 echo
+
+# importer les clés publiques de l'utilisateur
+SSH_KEYS=($(ls ~/.ssh/*.pub))
+if [ ${#SSH_KEYS[@]} = 0 ]; then
+    >&2 echo "Aucune clé SSH trouvée. Une clé SSH est requise pour l'accès distant."
+    exit 1
+fi
+SSH_PUBLIC_KEY=$(basename ${SSH_KEYS[0]})
+cp ${SSH_KEYS[0]} $SCRIPT_DIR/
+
+>&2 echo "La clé SSH publique ${SSH_PUBLIC_KEY} a été copiée pour associer au compte root et au compte utilisateur."
+
+read -p "Veuillez saisir un nom d'hôte (hostname) pour le système: " SERVER_HOSTNAME
+
+ROOT_PASSWORD_ENC=$(echo $ROOT_PASSWORD | openssl passwd -6 -stdin)
+USER_PASSWORD_ENC=$(echo $USER_PASSWORD | openssl passwd -6 -stdin)
+
+>&2 echo -e "Variables:
+
+root password: $ROOT_PASSWORD_ENC
+
+username: 
+user password: $USER_PASSWORD_ENC
+
+ssh key: $SSH_PUBLIC_KEY
+
+hostname: $SERVER_HOSTNAME"
+
+# TODO automatiser la création du script 'script'

@@ -1,5 +1,6 @@
 #!/bin/bash
-# Initialisation du serveur MicroOS
+# Initialisation du serveur openSUSE MicroOS/Leap Micro
+# https://documentation.suse.com/sle-micro/6.1/html/Micro-deployment-raw-images/index.html
 # Basé sur https://en.opensuse.org/SDB:K3s_cluster_deployment_on_MicroOS
 
 set -e
@@ -17,6 +18,7 @@ set -e
 # combustion: network
 ## Post output on stdout
 exec > >(exec tee -a /dev/tty0) 2>&1
+
 ## Add password for root user
 ## SUSE documentation recommends openssl passwd -6, mkpasswd --method=sha-512 works as well
 ## The default password that is set here is: linux
