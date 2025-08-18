@@ -184,6 +184,11 @@ Références:
   * token requis: `/var/lib/rancher/k3s/server/token`
 * Stockage (volumes): `/var/lib/rancher/k3s/storage`
 
+Pour la sauvegarde dans l'infonuagique, envisager un service européen similaire à Google Drive:
+
+* [kDrive - Infomaniak](https://www.infomaniak.com/fr/ksuite/kdrive)
+* [pCloud](https://www.pcloud.com/fr/)
+
 Références
 
 * [Backup and Restore - docs.k3s.io](https://docs.k3s.io/datastore/backup-restore)
