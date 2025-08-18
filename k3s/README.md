@@ -189,9 +189,24 @@ Références:
 
 Références
 
-* [Backup and Restore - k3s.io](https://docs.k3s.io/datastore/backup-restore)
-* [Storage - k3s.io](https://docs.k3s.io/storage)
+* [Backup and Restore - docs.k3s.io](https://docs.k3s.io/datastore/backup-restore)
+* [Storage - docs.k3s.io](https://docs.k3s.io/storage)
 * [Configuration - local-path-provisioner](https://github.com/rancher/local-path-provisioner/blob/master/README.md#configuration)
+
+## Operator Lifecycle Manager
+
+Les opérateurs sont intéressants. Toutefois, j'ai choisi de ne pas les employer avec `k3s` pour les raisons suivantes:
+
+* OLM v0 est en mode maintenance et sera éventuellement remplacé par OLM v1, pour lequel il ne semble pas y avoir de magasin encore
+* OLM v0 ne s'installe que par le biais d'une CLI qu'on doit au préalable télécharger
+  * on s'écarte de l'idéal Kubernetes d'installer par le biais de manifestes YAML
+* OLM utilise des ressources dans le cluster
+* certains projets d'importance (comme `cert-manager`) ont décidé de ne plus supporter d'opérateur
+* `k3s` intègre un contrôleur Helm permettant d'automatiser par Kubernetes l'installation de charts
+
+Référence
+
+* [Helm - docs.k3s.io](https://docs.k3s.io/helm)
 
 ## Installation dans un OS atomique
 
