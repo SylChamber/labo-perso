@@ -1,0 +1,86 @@
+{
+  "ignition": {
+    "version": "3.2.0"
+  },
+  "passwd": {
+    "users": [
+      {
+        "name": "root",
+        "passwordHash": "<hashed root password>",
+        "sshAuthorizedKeys": [
+          "<public SSH key>"
+        ]
+      },
+      {
+        "name": "<username>",
+        "passwordHash": "<hashed user password>",
+        "sshAuthorizedKeys": [
+          "<public SSH key>"
+        ]
+      }
+    ]
+  },
+  "storage": {
+    "filesystems": [
+      {
+        "device": "/dev/disk/by-label/ROOT",
+        "format": "btrfs",
+        "mountOptions": [
+          "subvol=/@/home"
+        ],
+        "path": "/home",
+        "wipeFilesystem": false
+      }
+    ],
+    "files": [
+      {
+        "overwrite": true,
+        "path": "/home/<username>/.pam_oath_usersfile",
+        "contents": {
+          "source": "data:,HOTP%2FT30%2F6%20<username>%20-%20<totp_secret>"
+        },
+        "user": {
+          "name": "<username>"
+        },
+        "group": {
+          "name": "<username>"
+        },
+        "mode": 384
+      },
+      {
+        "path": "/etc/hostname",
+        "mode": 420,
+        "overwrite": true,
+        "contents": {
+          "source": "data:,<hostname>"
+        }
+      },
+      {
+        "path": "/etc/locale.conf",
+        "mode": 420,
+        "overwrite": true,
+        "contents": {
+          "source": "data:text/plain;charset=utf-8;base64,TEFORz1mcl9GUi5VVEYtOAo=",
+          "human_read": "LANG=fr_FR.UTF-8\n"
+        }
+      }
+    ]
+  },
+  "systemd": {
+    "units": [
+      {
+        "name": "k3s-install.service",
+        "enabled": false,
+        "contents": "[Unit]\nDescription=Run k3s installer\nWants=network-online.target\nAfter=network.target network-online.target\nConditionPathExists=/usr/bin/k3s_installer.sh\nConditionPathExists=!/usr/local/bin/k3s\n[Service]\nType=forking\nTimeoutStartSec=120\nEnvironment=\"INSTALL_K3S_EXEC=server --cluster-init --write-kubeconfig-mode=644 --secrets-encryption=true --kube-apiserver-arg enable-admission-plugins=ExtendedResourceToleration --tls-san k3s.rloc,kubernetes.rloc,motel.rloc\"\nExecStart=/usr/bin/k3s_installer.sh\nRemainAfterExit=yes\nKillMode=process\n[Install]\nWantedBy=multi-user.target"
+      },
+      {
+        "name": "cockpit.socket",
+        "enabled": true
+      },
+      {
+        "name": "sshd.service",
+        "enabled": true
+      }
+    ]
+  }
+}

@@ -2,6 +2,7 @@
 # Construit un fichier _combustion_ pour la configuration d'openSUSE MicroOS/Leap Micro
 # https://documentation.suse.com/sle-micro/6.1/html/Micro-deployment-raw-images/index.html
 # Basé sur https://en.opensuse.org/SDB:K3s_cluster_deployment_on_MicroOS
+# Non fonctionnel - utiliser Fuel Ignition
 
 set -euo pipefail
 SCRIPT_DIR=$(dirname "$0")

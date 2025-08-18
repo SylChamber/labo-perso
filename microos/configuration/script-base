@@ -1,0 +1,27 @@
+#!/bin/bash
+# combustion: network
+# script generated with https://opensuse.github.io/fuel-ignition/
+
+# Redirect output to the console
+exec > >(exec tee -a /dev/tty0) 2>&1
+
+# Keyboard
+systemd-firstboot --force --keymap=ca-multix
+
+# Timezone
+systemd-firstboot --force --timezone=America/Toronto
+
+# Man pages pas installées; peut-être à générer
+zypper --non-interactive install bash-completion btop htop glibc-locale kubecolor man man-pages man-pages-fr patterns-microos-cockpit starship syncthing vim-small zsh zsh-htmldoc
+
+# install additional packages for localization
+zypper --non-interactive addlocale fr_CA
+
+# download k3s installer
+curl -L --output k3s_installer.sh https://get.k3s.io && install -m755 k3s_installer.sh /usr/bin/
+
+# Leave a marker
+echo "Configured with combustion" > /etc/issue.d/combustion
+
+# Close outputs and wait for tee to finish.
+exec 1>&- 2>&-; wait;
