@@ -194,6 +194,8 @@ Références
 * [Backup and Restore - docs.k3s.io](https://docs.k3s.io/datastore/backup-restore)
 * [Storage - docs.k3s.io](https://docs.k3s.io/storage)
 * [Configuration - local-path-provisioner](https://github.com/rancher/local-path-provisioner/blob/master/README.md#configuration)
+* [Comparatif des meilleurs stockages cloud en 2025 : lequel choisir ? - 01net.com](https://www.01net.com/cloud/)
+* [Test kDrive : avis sur le cloud le plus prometteur de 2025 - 01net.com](https://www.01net.com/cloud/kdrive/)
 
 ## Operator Lifecycle Manager
 
