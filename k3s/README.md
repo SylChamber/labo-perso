@@ -16,6 +16,13 @@ Voir:
 * [Argo CD Helm Chart](https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd)
 * [Helm - docs.k3s.io](https://docs.k3s.io/helm)
 
+## Niveau de sécurité des pods
+
+Explorer comment activer le profil `Restricted` et l'impact sur les déploiements.
+
+* [Pod Security Admission - Kubernetes](https://kubernetes.io/docs/concepts/security/pod-security-admission/)
+* [Pod Security Standards - Kubernetes](https://kubernetes.io/docs/concepts/security/pod-security-standards/)
+
 ## Ajout d'un noœud à GPU
 
 Avant d'ajouter un nœud, [déployer le serveur DNS du réseau local](../dns/README.md) afin de bénéficier de la résolution de nom sur le réseau local.
