@@ -179,6 +179,20 @@ Références:
 
 * [openssl - man page](https://manned.org/man/ubuntu-noble/openssl)
 
+## Sauvegardes
+
+`k3s` utilise une BD SQLite par défaut, il n'y a donc pas de BD `etcd` à sauvegarder. Il n'y a que des fichiers à sauvegarder:
+
+* BD: `/var/lib/rancher/k3s/server/db/`
+  * token requis: `/var/lib/rancher/k3s/server/token`
+* Stockage (volumes): `/var/lib/rancher/k3s/storage`
+
+Références
+
+* [Backup and Restore - k3s.io](https://docs.k3s.io/datastore/backup-restore)
+* [Storage - k3s.io](https://docs.k3s.io/storage)
+* [Configuration - local-path-provisioner](https://github.com/rancher/local-path-provisioner/blob/master/README.md#configuration)
+
 ## Installation dans un OS atomique
 
 Pour installation dans un OS de type Fedora Core OS ou bootc où le système de fichiers est immuable, il est préférable de ne pas utiliser le logiciel d'installation de `k3s` car ce dernier fait surtout de la configuration (en plus d'installer des prérequis au besoin, comme la [politique SELinux](https://docs.k3s.io/advanced#selinux-support) sous la famille Red Hat).
