@@ -23,6 +23,16 @@ Explorer comment activer le profil `Restricted` et l'impact sur les déploiement
 * [Pod Security Admission - Kubernetes](https://kubernetes.io/docs/concepts/security/pod-security-admission/)
 * [Pod Security Standards - Kubernetes](https://kubernetes.io/docs/concepts/security/pod-security-standards/)
 
+## Observabilité
+
+La plateforme d'observabilité la plus populaire, Prometheus/Loki Stack, consomme passablement de ressources. Ce n'est pas nécessairement approprié pour un laboratoire maison, sur de l'équipement similaire aux déploiements _Edge_. Explorer des options moins coûteuses.
+
+Candidats:
+
+* [How Pixie Enhances Edge Observability in Live Kubernetes Environments](https://medium.com/@serverwalainfra/how-pixie-enhances-edge-observability-in-live-kubernetes-environments-c24a04366f72)
+* [Pixie - Kubernetes Monitoring, Application Debug Platform](https://px.dev)
+  * [Install Guides - Self-Hosted Pixie](https://docs.px.dev/installing-pixie/install-guides/self-hosted-pixie/)
+
 ## Ajout d'un noœud à GPU
 
 Avant d'ajouter un nœud, [déployer le serveur DNS du réseau local](../dns/README.md) afin de bénéficier de la résolution de nom sur le réseau local.
