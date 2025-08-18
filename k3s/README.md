@@ -1,40 +1,8 @@
 # Cluster Kubernetes k3s
 
-Un cluster Kubernetes k3s est déployé sur un vieux portable Dell Latitude E7250.
+## Installation dans un OS immuable
 
-* Le [script d'installation a été téléchargé du site k3s.io](https://get.k3s.io)
-* le script est lancé avec les arguments suivants : `--tls-san="kubernetes.rloc,cloud.rloc,nuage.rloc" --secrets-encryption="true"`
-  * le chiffrement des secrets dans `etcd` est activé
-  * le certificat racine inclut les `subjectAltNames`:
-    * `kubernetes.rloc`
-    * `cloud.rloc`
-    * `nuage.rloc`
-
-On peut faire l'installation à l'aide d'un [fichier de configuration k3s](https://docs.k3s.io/installation/configuration#configuration-file):
-
-D'abord, créer le fichier de configuration k3s:
-
-```shell
-sudo mkdir -p /etc/rancher/k3s
-cat << EOF | sudo tee /etc/rancher/k3s/config.yaml
-# configuration K3s
-secrets-encryption: true
-tls-san:
-  - kubernetes.rloc
-  - cloud.rloc
-  - nuage.rloc
-  - motel.rloc
-kube-apiserver-arg:
-  # Activer l'ajout automatique des tolérances de ressources étendues, ex. nvidia.com/gpu
-  - enable-admission-plugins=ExtendedResourceToleration
-EOF
-```
-
-Ensuite, installer k3s à l'aide du fichier de configuration:
-
-```shell
-curl -sfL https://get.k3s.io | sh
-```
+Un OS immuable à faible entretien et faible empreinte a été sélectionné pour héberger un cluster k3s: [openSUSE MicroOS](https://microos.opensuse.org/). Pour la procédure d'installation du serveur avec `k3s`, voir [Déploiement d'openSUSE MicroOS ou Leap Micro](../microos/README.md).
 
 ## Ajout d'un noœud à GPU
 
@@ -208,7 +176,47 @@ Référence
 
 * [Helm - docs.k3s.io](https://docs.k3s.io/helm)
 
-## Installation dans un OS atomique
+## Installation manuelle
+
+Dans mes expérimentations, un cluster Kubernetes k3s a d'abord été déployé sur un vieux portable.
+
+* Le [script d'installation a été téléchargé du site k3s.io](https://get.k3s.io)
+* le script est lancé avec les arguments suivants : `--tls-san="kubernetes.rloc,cloud.rloc,nuage.rloc" --secrets-encryption="true"`
+  * le chiffrement des secrets dans `etcd` est activé
+  * le certificat racine inclut les `subjectAltNames`:
+    * `kubernetes.rloc`
+    * `cloud.rloc`
+    * `nuage.rloc`
+
+On peut faire l'installation à l'aide d'un [fichier de configuration k3s](https://docs.k3s.io/installation/configuration#configuration-file):
+
+D'abord, créer le fichier de configuration k3s:
+
+```shell
+sudo mkdir -p /etc/rancher/k3s
+cat << EOF | sudo tee /etc/rancher/k3s/config.yaml
+# configuration K3s
+secrets-encryption: true
+tls-san:
+  - kubernetes.rloc
+  - cloud.rloc
+  - nuage.rloc
+  - motel.rloc
+kube-apiserver-arg:
+  # Activer l'ajout automatique des tolérances de ressources étendues, ex. nvidia.com/gpu
+  - enable-admission-plugins=ExtendedResourceToleration
+EOF
+```
+
+Ensuite, installer k3s à l'aide du fichier de configuration:
+
+```shell
+curl -sfL https://get.k3s.io | sh
+```
+
+## Installation dans un OS Fedora atomique
+
+> openSUSE MicroOS/Leap Micro a finalement été choisi comme OS serveur.
 
 Pour installation dans un OS de type Fedora Core OS ou bootc où le système de fichiers est immuable, il est préférable de ne pas utiliser le logiciel d'installation de `k3s` car ce dernier fait surtout de la configuration (en plus d'installer des prérequis au besoin, comme la [politique SELinux](https://docs.k3s.io/advanced#selinux-support) sous la famille Red Hat).
 
