@@ -4,6 +4,18 @@
 
 Un OS immuable à faible entretien et faible empreinte a été sélectionné pour héberger un cluster k3s: [openSUSE MicroOS](https://microos.opensuse.org/). Pour la procédure d'installation du serveur avec `k3s`, voir [Déploiement d'openSUSE MicroOS ou Leap Micro](../microos/README.md).
 
+## GitOps
+
+L'automatisation permet de gagner du temps au final. Le déploiement des applications dans le cluster sera donc géré selon les principes GitOps. [Argo CD](https://argo-cd.readthedocs.io/) a été choisi par familiarité.
+
+On peut profiter de la [fonctionnalité du contrôleur Helm](https://docs.k3s.io/helm) pour déployer Argo CD via un Helm chart, mais directement via `kubectl` à l'aide de manifestes YAML. De cette façon, les mises à jour d'Argo CD pourront également être faites en GitOps.
+
+Voir:
+
+* [Installation - ArgoCD](https://argo-cd.readthedocs.io/en/stable/operator-manual/installation/#helm)
+* [Argo CD Helm Chart](https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd)
+* [Helm - docs.k3s.io](https://docs.k3s.io/helm)
+
 ## Ajout d'un noœud à GPU
 
 Avant d'ajouter un nœud, [déployer le serveur DNS du réseau local](../dns/README.md) afin de bénéficier de la résolution de nom sur le réseau local.

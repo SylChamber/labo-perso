@@ -1,5 +1,7 @@
 # GitOps - gestion des applications avec Argo CD
 
+> Ce projet utilise Operator Lifecycle Manager pour installer Argo CD. Il a été [décidé de ne pas utiliser OLM](../README.md#operator-lifecycle-manager), mais plutôt profiter des fonctionnalités du [contrôleur Helm de k3s](https://docs.k3s.io/helm).
+
 ## Prérequis
 
 - `operator-sdk`
