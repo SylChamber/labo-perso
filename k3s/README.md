@@ -33,43 +33,6 @@ Candidats:
 * [Pixie - Kubernetes Monitoring, Application Debug Platform](https://px.dev)
   * [Install Guides - Self-Hosted Pixie](https://docs.px.dev/installing-pixie/install-guides/self-hosted-pixie/)
 
-## Ajout d'un noœud à GPU
-
-Avant d'ajouter un nœud, [déployer le serveur DNS du réseau local](../dns/README.md) afin de bénéficier de la résolution de nom sur le réseau local.
-
-Ensuite créer le fichier de configuration du nœud:
-
-> On ajoute
-
-```shell
-sudo mkdir -p /etc/rancher/k3s
-cat << EOF | sudo tee /etc/rancher/k3s/config.yaml
-# configuration d'un agent, un worker k3s
-server: https://kubernetes.rloc:6443
-token-file: /etc/rancher/k3s/node-token
-default-runtime: nvidia
-node-label:
-  - gpu=nvidia
-EOF
-```
-
-> On spécifie ici le runtime par défaut comme étant `nvidia` afin de supporter l'utilisation du GPU pour exécuter des charges de travail GPU.
-
-Copier le token du serveur pour l'inscription d'agents: `/var/lib/rancher/k3s/server/node-token` et le coller dans `/etc/rancher/k3s/node-token`.
-
-```shell
-# inclure un espace au début
- TOKEN='......'
-echo $TOKEN | sudo tee /etc/rancher/k3s/node-token
-sudo chmod 600 /etc/rancher/k3s/node-token
-```
-
-Ensuite, installer k3s à l'aide du fichier de configuration:
-
-```shell
-curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="agent" sh
-```
-
 ## Ajout d'un utilisateur
 
 L'ajout d'utilisateurs se fait via des [Certificate Signing Requests](https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/#normal-user) (CSR).
@@ -176,6 +139,20 @@ Références:
 
 * [openssl - man page](https://manned.org/man/ubuntu-noble/openssl)
 
+## Gestion des certificats
+
+Envisager une gestion automatisée des certificats TLS via `cert-manager` dans k3s et un serveur ACME privé:
+
+* [cert-manager](https://cert-manager.io/)
+* [Self-Host ACME Server](https://blog.sean-wright.com/self-host-acme-server/)
+* [Run your own private CA & ACME server using step-ca](https://smallstep.com/blog/private-acme-server/)
+* [step-ca - Github](https://github.com/smallstep/certificates)
+* [step-ca Documentation](https://smallstep.com/docs/step-ca/index.html)
+  * [step-ca Installation](https://smallstep.com/docs/step-ca/installation/index.html)
+* [step-ca Docker Image - Docker Hub](https://hub.docker.com/r/smallstep/step-ca)
+
+Il est préférable de déployer `step-ca` en dehors de Kubernetes puisque c'est une dépendance du cluster. Il existe en image conteneur. Envisager de l'installer comme quadlet Podman dans openSUSE MicroOS.
+
 ## Sauvegardes
 
 `k3s` utilise une BD SQLite par défaut, il n'y a donc pas de BD `etcd` à sauvegarder. Il n'y a que des fichiers à sauvegarder:
@@ -197,6 +174,43 @@ Références
 * [Comparatif des meilleurs stockages cloud en 2025 : lequel choisir ? - 01net.com](https://www.01net.com/cloud/)
 * [Test kDrive : avis sur le cloud le plus prometteur de 2025 - 01net.com](https://www.01net.com/cloud/kdrive/)
 * [Les 18 meilleures alternatives à Google Drive - Leptidigital](https://www.leptidigital.fr/webmarketing/alternative-google-drive-24939/)
+
+## Ajout d'un nœud à GPU
+
+Avant d'ajouter un nœud, [déployer le serveur DNS du réseau local](../dns/README.md) afin de bénéficier de la résolution de nom sur le réseau local.
+
+Ensuite créer le fichier de configuration du nœud:
+
+> On ajoute
+
+```shell
+sudo mkdir -p /etc/rancher/k3s
+cat << EOF | sudo tee /etc/rancher/k3s/config.yaml
+# configuration d'un agent, un worker k3s
+server: https://kubernetes.rloc:6443
+token-file: /etc/rancher/k3s/node-token
+default-runtime: nvidia
+node-label:
+  - gpu=nvidia
+EOF
+```
+
+> On spécifie ici le runtime par défaut comme étant `nvidia` afin de supporter l'utilisation du GPU pour exécuter des charges de travail GPU.
+
+Copier le token du serveur pour l'inscription d'agents: `/var/lib/rancher/k3s/server/node-token` et le coller dans `/etc/rancher/k3s/node-token`.
+
+```shell
+# inclure un espace au début
+ TOKEN='......'
+echo $TOKEN | sudo tee /etc/rancher/k3s/node-token
+sudo chmod 600 /etc/rancher/k3s/node-token
+```
+
+Ensuite, installer k3s à l'aide du fichier de configuration:
+
+```shell
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="agent" sh
+```
 
 ## Operator Lifecycle Manager
 
