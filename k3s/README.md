@@ -196,6 +196,7 @@ Références
 * [Configuration - local-path-provisioner](https://github.com/rancher/local-path-provisioner/blob/master/README.md#configuration)
 * [Comparatif des meilleurs stockages cloud en 2025 : lequel choisir ? - 01net.com](https://www.01net.com/cloud/)
 * [Test kDrive : avis sur le cloud le plus prometteur de 2025 - 01net.com](https://www.01net.com/cloud/kdrive/)
+* [Les 18 meilleures alternatives à Google Drive - Leptidigital](https://www.leptidigital.fr/webmarketing/alternative-google-drive-24939/)
 
 ## Operator Lifecycle Manager
 

@@ -1,11 +1,13 @@
 # Dépôts helm
-- name: open-webui
-  url: https://open-webui.github.io/helm-charts
-- name: nextcloud
-  url: https://nextcloud.github.io/helm/
+- name: argo
+  url: https://argoproj.github.io/argo-helm
 - name: coredns
   url: https://coredns.github.io/helm
+- name: nextcloud
+  url: https://nextcloud.github.io/helm/
 - name: nfd
   url: https://kubernetes-sigs.github.io/node-feature-discovery/charts
 - name: nvdp
   url: https://nvidia.github.io/k8s-device-plugin
+- name: open-webui
+  url: https://open-webui.github.io/helm-charts
