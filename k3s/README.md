@@ -141,7 +141,7 @@ Références:
 
 ## Gestion des certificats
 
-Envisager une gestion automatisée des certificats TLS via `cert-manager` dans k3s et un serveur ACME privé:
+Il est préférable de contrôler ses propres certificats, mais la gestion manuelle est pénible. Envisager une gestion automatisée des certificats TLS via `cert-manager` dans k3s et un serveur ACME privé:
 
 * [cert-manager](https://cert-manager.io/)
 * [Self-Host ACME Server](https://blog.sean-wright.com/self-host-acme-server/)
