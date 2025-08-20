@@ -1,5 +1,7 @@
 # Déploiement d'un serveur DNS pour le réseau local
 
+> Comme ce serveur DNS est un prérequis pour le cluster Kubernetes, envisager de déployer CoreDNS comme conteneur Podman et de l'installer comme service systemd avec Podman Quadlet.
+
 Un serveur DNS est déployé dans `k3s` pour la résolution de noms dans le réseau local, puisque ça semble problématique avec le routeur wifi Asus.
 
 Le même serveur DNS que celui déployé dans `k3s` ― CoreDNS ― est déployé dans un _namespace_ distinct afin d'éviter de nuire à la résolution de noms dans le cluster. Puisqu'Ubuntu utilise le port `53` avec `systemd-resolved` pour la résolution de noms locale, ce dernier est désactivé afin d'utiliser le port `53` avec le déploiement de CoreDNS.
@@ -114,5 +116,6 @@ dig @192.168.50.247 motel.rloc
 
 ## Références
 
-- [Chart CoreDNS](https://github.com/coredns/helm)
-- [Custom DNS Entries For Kubernetes - CoreDNS Blog](https://coredns.io/2017/05/08/custom-dns-entries-for-kubernetes/)
+* [Chart CoreDNS](https://github.com/coredns/helm)
+* [CoreDNS Docker Image](https://hub.docker.com/r/coredns/coredns/)
+* [Custom DNS Entries For Kubernetes - CoreDNS Blog](https://coredns.io/2017/05/08/custom-dns-entries-for-kubernetes/)
