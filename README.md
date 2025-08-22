@@ -30,6 +30,12 @@ Le serveur a été [configuré avec openSUSE MicroOS](microos/README.md), une in
 
 Au plan du système:
 
+* ajouts aux paquets
+  * retrait des man pages
+    * j'ai tenté d'installé les man pages mais ça n'a pas fonctionné, car MicroOS est configuré pour ne pas les inclure: `rpm.install.excludedocs = yes` est spécifié dans `/etc/zypp/zypp.conf`
+    * c'est l'utilisation d'une `distrobox` qui est recommandée par le responsable de MicroOS
+  * ajout de `distrobox`
+    * `toolbox` est présent, toutefois
 * chiffrement intégral (Full Disk Encryption)
   * mes tentatives ont été infructueuses, tant avec Leap Micro (erreurs `btrfs` constantes) qu'avec MicroOS (déverrouillage via TPM non fonctionnel)
 * sauvegardes
