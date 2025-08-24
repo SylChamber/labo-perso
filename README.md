@@ -36,6 +36,8 @@ Au plan du système:
     * c'est l'utilisation d'une `distrobox` qui est recommandée par le responsable de MicroOS
   * ajout de `distrobox`
     * `toolbox` est présent, toutefois
+  * ajout des outils réseau dig, nslookup
+  * ajout de tailscale, outil VPN et d'exposition sur Internet
 * chiffrement intégral (Full Disk Encryption)
   * mes tentatives ont été infructueuses, tant avec Leap Micro (erreurs `btrfs` constantes) qu'avec MicroOS (déverrouillage via TPM non fonctionnel)
 * sauvegardes
