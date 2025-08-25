@@ -60,6 +60,8 @@ Au plan du cluster `k3s`:
 * déploiement en continu GitOps, avec Argo CD
   * déploiement d'Argo CD avec un Helm Chart par le biais du Helm Controller
 * sécurité améliorée des pods avec le profil `Restricted` de Pod Security Standards
+* gestion sécuritaire du redémarrage Kubernetes avec [Kured](https://kured.dev/)
+  * déterminer si c'est requis
 * mises à niveau automatisées de `k3s`
   * déploiement du System Upgrade Controller Rancher par GitOps
 * outillage d'observabilité
