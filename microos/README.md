@@ -10,7 +10,11 @@ Le déploiement des variantes MicroOS (_rolling) ou Leap Micro (stable, biannuel
     * des services à créer ou activer
   * un script de personnalisation de l'installation, autrement dit des instructions supplémentaires
 
-## Installation
+## Installation SelfInstall
+
+> Le serveur résultant ne sera pas protégé par le chiffrement intégral du disque. Je n'ai pas réussi à faire fonctionner le déverrouillage avec TPM2, ni avec FIDO2 sans vérification utilisateur.
+>
+> Avec `transactional-update`, MicroOS a l'avantage d'un système immutable qui peut très bien être modifié sans impact sur les mises à jour, puisque chaque transaction prépare un nouveau snapshot, qui sera lui-même remplacé à la prochaine mise à jour.
 
 Les versions MicroOS et Leap Micro sont similaires; cette dernière est basée sur SUSE Linux Micro, elle-même originant de MicroOS.
 
@@ -20,7 +24,7 @@ Voici les étapes pour l'installation d'une version `SelfInstall` (voir les [ré
 >
 > De multiples tentatives d'installation d'images `.raw` ont été faites avec Leap Micro, pour la version `encrypted` pour le disque chiffré LUKS avec déverrouillage via TPM; le système était dysfonctionnel avec de multiples erreurs BTRFS.
 >
-> Une tentative a été faite avec l'ISO de MicroOS pour installer avec chiffrement intégral et déverrouillage via TPM. Ce dernier n'a pas fonctionné. Et il n'y avait pas possibilité d'installer des paquets supplémentaires à même l'installation.
+> Une tentative a été faite avec l'ISO de MicroOS pour installer avec chiffrement intégral et déverrouillage via TPM. Ce dernier n'a pas fonctionné. Une solution a toutefois été trouvée, voir la section précédente.
 
 1. Désactiver **SecureBoot** sur le serveur cible
 2. Télécharger l'image `SelfInstall` de MicroOS et la graver sur une clé USB
@@ -56,11 +60,11 @@ Si on utilise Fuel Ignition pour générer la configuration, voici les informati
 
 ### Paquets additionnels
 
-> L'installation des man pages ne fonctionne pas. Les dossiers sous `/usr/share/man` sont vides. Doit-on générer les man pages pendant la configuration?
+> L'installation des man pages ne fonctionne pas car la configuration `/etc/zypper/zypp.conf` spécifie de ne pas les installer. De surcroît, `btop` plante.
 
 ```text
 # paquets additionnels
-bash-completion btop htop glibc-locale kubecolor man man-pages man-pages-fr patterns-microos-cockpit starship syncthing vim-small zsh zsh-htmldoc
+bash-completion distrobox htop glibc-locale kubecolor patterns-microos-cockpit starship syncthing vim-small zsh zsh-htmldoc
 ```
 
 ### Personnalisation du script combustion
@@ -124,6 +128,83 @@ Cockpit n'est pas installé par défaut dans la version `SelfInstall`. Il faut l
 
 * nom: `sshd.service`
 * enabled: `yes`
+
+## Installation avec logiciel d'installation (ISO)
+
+> J'ai réussi à faire fonctionner le chiffrement intégral (FDE) avec déverrouillage via TPM2, mais en tentant une réinstallation, impossible de faire fonctionner le déchiffrement avec TPM2. Je ne suis pas arrivé à retrouver la combinaison de commandes qui l'ont fait fonctionner la première fois. Ça plante toujours sur une erreur disant que le device TPM2 est introuvable, et demande le mot de passe LUKS.
+
+* saisir mot de passe du chiffrement intégral
+* prendre en note le texte à insérer dans la ligne de commande de démarrage: measure-pcr-validatr.ignore=yes
+* allumer le serveur
+* saisir mot de passe du chiffrement intégral
+* s'authentifier comme root
+* selon [Quickstart in Full Disk Encryption with TPM and YaST2](https://microos.opensuse.org/blog/2024-09-03-quickstart-fde-yast2/), lancer
+  * sdbootutil enroll --method=tpm2
+* mettre à jour les mesures de prédictions
+  * sdbootutil --ask-pin update-predictions
+* redémarrer
+* insuffisant, mot de passe est demandé
+
+### Notes
+
+Tentative infructueuse supplémentaire, qui repose sur `dracut`, qui ne peut fonctionner car ça requiert les droits en modification sur `/boot`. Ce qui n'est pas le cas pour `root`.
+
+* le déverrouillage avec TPM2 ne fonctionne pas. Désinscrire
+  * `sdbootutil unenroll --method tpm2`
+* créer un utilisateur
+
+    ```shell
+    useradd -m sylvain
+    mkdir ~sylvain/.ssh && chown sylvain:sylvain ~sylvain/.ssh && chmod 700 ~sylvain/.ssh
+    cp ~/.ssh/authorized_keys ~sylvain/.ssh && chown sylvain:sylvain ~sylvain/.ssh/authorized_keys
+    passwd sylvain
+    ```
+
+* création de `/etc/dracut.conf.d/50-tpm2.conf`
+
+    ```shell
+    # Déverrouillage avec TPM2
+    # https://askubuntu.com/questions/1470391/luks-tpm2-auto-unlock-at-boot-systemd-cryptenroll
+    hostonly="yes"
+    add_dracutmodules+=" tpm2-tss "
+    ```
+
+* script `/usr/local/bin/tpm2-luks-enroll`, à lancer
+
+    ```shell
+    #!/usr/bin/env bash
+    # Enrôler ou ré-enrôler le déverrouillage LUKS avec TPM2
+
+    # obtenir les UUID des partitions dans un array, à partir de crypttab
+    DEVICES=($(cat /etc/crypttab | grep -v '#' | awk '{print $2}' | sed -r 's/UUID=(.*)/\1/'))
+
+    # enrôler chaque partition
+    for DEVICE in ${DEVICES[@]}; do
+      sudo systemd-cryptenroll --wipe-slot=tpm2 /dev/disk/by-uuid/$DEVICE
+      sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs="7+14:sha256" "$@" /dev/disk/by-uuid/$DEVICE
+    done
+    ```
+
+* vérifier l'état du déverrouillage TPM2
+
+    ```shell
+    > sudo systemd-cryptenroll /dev/sda2
+    SLOT TYPE    
+      0 password
+      1 tpm2
+    > sudo systemd-cryptenroll /dev/sda3
+    SLOT TYPE    
+      0 password
+      1 tpm2
+    ```
+
+* modifier `/etc/crypttab` pour ajouter `luks,tpm2-device=auto,no-read-workqueue,no-write-workqueue` à chaque partition LUKS
+* lancer `dracut -f`
+
+Références
+
+* [LUKS + TPM2 + auto unlock at boot (systemd-cryptenroll) - AskUbuntu](https://askubuntu.com/questions/1470391/luks-tpm2-auto-unlock-at-boot-systemd-cryptenroll)
+* [systemd-cryptenroll (1)](https://www.man7.org/linux/man-pages/man1/systemd-cryptenroll.1.html)
 
 ## Références
 
