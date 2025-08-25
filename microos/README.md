@@ -73,6 +73,12 @@ bash-completion cockpit-firewalld cockpit-selinux distrobox htop glibc-locale ku
 # install additional packages for localization
 zypper --non-interactive addlocale fr_CA
 
+# install tailscale
+rpm --import https://pkgs.tailscale.com/stable/opensuse/tumbleweed/repo.gpg
+zypper --non-interactive addrepo --gpgcheck --repo https://pkgs.tailscale.com/stable/opensuse/tumbleweed/tailscale.repo
+zypper --non-interactive refresh
+zypper --non-interactive install tailscale
+
 # download k3s installer
 curl -L --output k3s_installer.sh https://get.k3s.io && install -m755 k3s_installer.sh /usr/bin/
 ```
