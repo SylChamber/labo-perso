@@ -37,7 +37,7 @@ Au plan du système:
     * il y a un outil `man-online` qui permet d'afficher les pages man; `man` en est un alias
   * **(fait)** ajout de `distrobox`
     * `toolbox` est présent, toutefois
-  * ajout des outils réseau dig, nslookup
+  * **(fait)** ajout des outils réseau dig, nslookup: `bind-utils`
   * **(fait)** ajout de tailscale, outil VPN et d'exposition sur Internet
   * ajout de [podlet](https://github.com/containers/podlet), qui génère des fichiers Quadlet
     * en attendant la version récente de podman qui inclut la fonctionnalité
