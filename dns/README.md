@@ -2,6 +2,16 @@
 
 > Comme ce serveur DNS est un prérequis pour le cluster Kubernetes, envisager de déployer CoreDNS comme conteneur Podman et de l'installer comme service systemd avec Podman Quadlet.
 
+Identifier d'abord comment ajouter un serveur DNS manuellement sous openSUSE, puisqu'il n'y a pas de service `systemd-resolved` comme sous Ubuntu. Ça semble se faire avec `NetworkManager`. Voir en référence.
+
+Références
+
+* [How to manage DNS in NetworkManager via console (nmcli)? - ServerFault](https://serverfault.com/questions/810636/how-to-manage-dns-in-networkmanager-via-console-nmcli)
+
+## Déploiement dans k3s
+
+> Ce déploiement dans k3s implique une perte de service dans certaines situations. Préférer une installation hors k3s via un service podman Quadlet.
+
 Un serveur DNS est déployé dans `k3s` pour la résolution de noms dans le réseau local, puisque ça semble problématique avec le routeur wifi Asus.
 
 Le même serveur DNS que celui déployé dans `k3s` ― CoreDNS ― est déployé dans un _namespace_ distinct afin d'éviter de nuire à la résolution de noms dans le cluster. Puisqu'Ubuntu utilise le port `53` avec `systemd-resolved` pour la résolution de noms locale, ce dernier est désactivé afin d'utiliser le port `53` avec le déploiement de CoreDNS.
