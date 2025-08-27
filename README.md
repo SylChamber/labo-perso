@@ -34,6 +34,7 @@ Au plan du système:
   * **(fait)** retrait des man pages
     * j'ai tenté d'installé les man pages mais ça n'a pas fonctionné, car MicroOS est configuré pour ne pas les inclure: `rpm.install.excludedocs = yes` est spécifié dans `/etc/zypp/zypp.conf`
     * c'est l'utilisation d'une `distrobox` qui est recommandée par le responsable de MicroOS
+    * il y a un outil `man-online` qui permet d'afficher les pages man; `man` en est un alias
   * **(fait)** ajout de `distrobox`
     * `toolbox` est présent, toutefois
   * ajout des outils réseau dig, nslookup
