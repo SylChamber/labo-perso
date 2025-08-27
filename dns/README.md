@@ -8,6 +8,30 @@ Références
 
 * [How to manage DNS in NetworkManager via console (nmcli)? - ServerFault](https://serverfault.com/questions/810636/how-to-manage-dns-in-networkmanager-via-console-nmcli)
 
+## Déploiement comme service Podman Quadlet
+
+Sous openSUSE MicroOS, on doit activer une règle parefeu `firewalld` pour permettre l'entrée sur 53 en TCP en UDP. `cockpit-firewalld` doit être installé, et on peut gérer les règles sous **Réseau** dans Cockpit.
+
+Pour lancer manuellement CoreDNS avec la configuration par défaut (avec permissions pour exposer le port 53 sur TCP et UDP), pour tester:
+
+> Lancer `podman run coredns/coredns -h` pour obtenir les options de ligne de commande.
+
+```shell
+podman run -d -p 53:53 -p 53:53/udp coredns/coredns 
+```
+
+on peut tester avec `dig` en spécifiant le serveur:
+
+```shell
+# localement
+dig @localhost whoami.example.org
+
+# à partir d'un autre ordinateur
+dig @motel whoami.example.org
+```
+
+> Explorer comment définir un volume pour la configuration avec Podman Quadlet.
+
 ## Déploiement dans k3s
 
 > Ce déploiement dans k3s implique une perte de service dans certaines situations. Préférer une installation hors k3s via un service podman Quadlet.
