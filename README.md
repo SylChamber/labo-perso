@@ -31,17 +31,20 @@ Le serveur a été [configuré avec openSUSE MicroOS](microos/README.md), une in
 Au plan du système:
 
 * ajouts aux paquets
-  * retrait des man pages
+  * **(fait)** retrait des man pages
     * j'ai tenté d'installé les man pages mais ça n'a pas fonctionné, car MicroOS est configuré pour ne pas les inclure: `rpm.install.excludedocs = yes` est spécifié dans `/etc/zypp/zypp.conf`
     * c'est l'utilisation d'une `distrobox` qui est recommandée par le responsable de MicroOS
-  * ajout de `distrobox`
+  * **(fait)** ajout de `distrobox`
     * `toolbox` est présent, toutefois
   * ajout des outils réseau dig, nslookup
-  * ajout de tailscale, outil VPN et d'exposition sur Internet
+  * **(fait)** ajout de tailscale, outil VPN et d'exposition sur Internet
   * ajout de [podlet](https://github.com/containers/podlet), qui génère des fichiers Quadlet
     * en attendant la version récente de podman qui inclut la fonctionnalité
 * chiffrement intégral (Full Disk Encryption)
   * mes tentatives ont été infructueuses, tant avec Leap Micro (erreurs `btrfs` constantes) qu'avec MicroOS (déverrouillage via TPM non fonctionnel)
+  * plusieurs tentatives faites avec MicroOS; systemd-crypt ne trouve pas l'appareil TPM2
+  * mon serveur ne supporte pas la méthode de stockage par défaut
+  * comme je veux les mises à jour automatiques de l'OS, je garde non chiffré pour l'instant
 * sauvegardes
   * sauvegardes automatiques locales sur mes ordinateurs à l'aide de `syncthing` (déjà utilisé sur mes appareils)
   * sauvegarde automatique dans l'infonuagique des données chiffrées avec rclone (voir des fournisseurs potentiels listés sous [k3s - Sauvegardes](k3s/README.md#sauvegardes))
