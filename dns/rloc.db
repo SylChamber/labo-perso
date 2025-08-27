@@ -12,13 +12,13 @@ $TTL 3600
                         3600 )      ; Negative Cache TTL
 
 @           IN      NS      ns.rloc.
-ns          IN      A       192.168.50.247
+ns          IN      A       192.168.50.115
 
-arcade      IN      A       192.168.50.247
+arcade      IN      A       192.168.50.185
 ai          IN      CNAME   arcade.rloc.
 ia          IN      CNAME   arcade.rloc.
 
-motel       IN      A       192.168.50.185
+motel       IN      A       192.168.50.115
 cloud       IN      CNAME   motel.rloc.
 kubernetes  IN      CNAME   motel.rloc.
 nuage       IN      CNAME   motel.rloc.
