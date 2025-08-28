@@ -8,6 +8,30 @@ Références
 
 * [How to manage DNS in NetworkManager via console (nmcli)? - ServerFault](https://serverfault.com/questions/810636/how-to-manage-dns-in-networkmanager-via-console-nmcli)
 
+## Choix du nom de domaine
+
+Les avis sont partagés sur le choix d'un nom de domaine pour un réseau local. Plusieurs recommandations sont incorrectes. Selon les derniers RFC (_requests for comments_), deux domaines sont à la fois réservés pour les réseaux privés, et utilisables avec le protocole DNS:
+
+* `.home.arpa` (pas optimal pour des néophytes ne connaissant pas le contexte ni l'acronyme ARPA)
+* `.internal`
+
+Le seul moyen fiable est d'éviter un domaine inexistant et d'utiliser un sous-domaine d'un domaine réel qui nous appartient. Par exemple: `local.sylchamber.ca`.
+
+Dans un contexte purement interne, pour une résidence, on pourrait envisager:
+
+* `.maison.internal`
+* `.foyer.internal`
+* `.domicile.internal`
+
+Références
+
+* [.internal - Wikipedia](https://en.m.wikipedia.org/wiki/.internal)
+* [Top level domain/domain suffix for private network? - ServerFault](https://serverfault.com/questions/17255/top-level-domain-domain-suffix-for-private-network) (voir les commentaires)
+* [RFC9476 The .alt Special-Use Top-Level Domain](https://www.rfc-editor.org/rfc/rfc9476.html)
+* [RFC8375 Special-Use Domain 'home.arpa.'](https://www.rfc-editor.org/rfc/rfc8375.html)
+* [What's the difference between .local, .home, and .lan? - Unix&Linux](https://unix.stackexchange.com/questions/92441/whats-the-difference-between-local-home-and-lan)
+* [Special-Use Domain Names - IANA](https://www.iana.org/assignments/special-use-domain-names/special-use-domain-names.xhtml)
+
 ## Exécution avec Podman
 
 Sous openSUSE MicroOS, on doit activer une règle parefeu `firewalld` pour permettre l'entrée sur 53 en TCP en UDP. `cockpit-firewalld` doit être installé, et on peut gérer les règles sous **Réseau** dans Cockpit.
