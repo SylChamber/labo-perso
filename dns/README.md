@@ -7,6 +7,7 @@ Identifier d'abord comment ajouter un serveur DNS manuellement sous openSUSE, pu
 Références
 
 * [How to manage DNS in NetworkManager via console (nmcli)? - ServerFault](https://serverfault.com/questions/810636/how-to-manage-dns-in-networkmanager-via-console-nmcli)
+* [Can’t resolve dns names - openSUSE Forums](https://forums.opensuse.org/t/cant-resolve-dns-names/169230)
 
 ## Choix du nom de domaine
 
@@ -22,6 +23,8 @@ Dans un contexte purement interne, pour une résidence, on pourrait envisager:
 * `.maison.internal`
 * `.foyer.internal`
 * `.domicile.internal`
+
+C'est sur la 3e option que mon choix se porte: `.domicile.internal`. Le domaine peut être défini comme `domicile.internal` (sans le . en préfixe) dans la configuration d'un routeur Asus sous **Advanced Settings** > **LAN** > **DHCP Server** > **Basic Config** > **RT-AX88U's Domain Name**.
 
 Références
 
