@@ -76,38 +76,38 @@ cat << EOF | sudo tee /var/lib/coredns/etc/Corefile
     forward . 24.200.241.37 24.201.245.77
 }
 
-labo.rloc:53 {
-    file /etc/coredns/labo.rloc.db
+domicile.internal:53 {
+    file /etc/coredns/domicile.internal.db
     log
     errors
 }
 EOF
 
-cat << EOF | sudo tee /var/lib/coredns/etc/labo.rloc.db
+cat << EOF | sudo tee /var/lib/coredns/etc/domicile.internal.db
 ; Vérification du format:
 ; apt install bind9-utils
-; named-checkzone rloc.db
+; named-checkzone domicile.internal.db
 
-$ORIGIN rloc.
+$ORIGIN domicile.internal.
 $TTL 3600
-@       IN      SOA     dns.labo.rloc. silicone95.proton.me. (
+@       IN      SOA     ns.domicile.internal. silicone95.proton.me. (
                         2024030901  ; Serial
                         7200        ; Refresh
                         3600        ; Retry
                         1209600     ; Expire
                         3600 )      ; Negative Cache TTL
 
-@           IN      NS      dns.labo.rloc.
+@           IN      NS      ns.domicile.internal.
 ns          IN      A       192.168.50.115
 
 arcade      IN      A       192.168.50.185
-ai          IN      CNAME   arcade.labo.rloc.
-ia          IN      CNAME   arcade.labo.rloc.
+ai          IN      CNAME   arcade.domicile.internal.
+ia          IN      CNAME   arcade.domicile.internal.
 
 motel       IN      A       192.168.50.115
-cloud       IN      CNAME   motel.labo.rloc.
-kubernetes  IN      CNAME   motel.labo.rloc.
-nuage       IN      CNAME   motel.labo.rloc.
+cloud       IN      CNAME   motel.domicile.internal.
+kubernetes  IN      CNAME   motel.domicile.internal.
+nuage       IN      CNAME   motel.domicile.internal.
 
 routeur     IN      A       192.168.50.1
 EOF
