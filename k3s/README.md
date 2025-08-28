@@ -4,6 +4,14 @@
 
 Un OS immuable à faible entretien et faible empreinte a été sélectionné pour héberger un cluster k3s: [openSUSE MicroOS](https://microos.opensuse.org/). Pour la procédure d'installation du serveur avec `k3s`, voir [Déploiement d'openSUSE MicroOS ou Leap Micro](../microos/README.md).
 
+## Règles parefeu
+
+Le port `6443` doit être débloqué pour l'accès distant à l'API de Kubernetes. Dans Cockpit, catégorie Réseau, section Pare-feu, cliquer sur **Modifier les règles et les zones** pour activer dans la zone publique le service `kube-apiserver` sur le port TCP `6443`.
+
+De même, pour accéder aux applications exposées par `NodePort`, activer le service `kube-nodeport-services`.
+
+Pour ajouter d'autres nœuds au cluster, il faudra activer les services `kube-*` appropriés.
+
 ## GitOps
 
 L'automatisation permet de gagner du temps au final. Le déploiement des applications dans le cluster sera donc géré selon les principes GitOps. [Argo CD](https://argo-cd.readthedocs.io/) a été choisi par familiarité.
