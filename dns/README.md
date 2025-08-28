@@ -8,7 +8,7 @@ Références
 
 * [How to manage DNS in NetworkManager via console (nmcli)? - ServerFault](https://serverfault.com/questions/810636/how-to-manage-dns-in-networkmanager-via-console-nmcli)
 
-## Déploiement comme service Podman Quadlet
+## Exécution avec Podman
 
 Sous openSUSE MicroOS, on doit activer une règle parefeu `firewalld` pour permettre l'entrée sur 53 en TCP en UDP. `cockpit-firewalld` doit être installé, et on peut gérer les règles sous **Réseau** dans Cockpit.
 
@@ -31,6 +31,65 @@ dig @motel whoami.example.org
 ```
 
 > Explorer comment définir un volume pour la configuration avec Podman Quadlet.
+
+## Déploiement comme service Podman Quadlet
+
+On peut utiliser [Podlet](https://github.com/containers/podlet) pour créer la base d'un fichier Podman Quadlet, mais on doit configurer plus de paramètres. Voir les références.
+
+D'abord créer un dossier où sera stockée la configuration de CoreDNS (`Corefile`):
+
+```shell
+sudo mkdir -p /var/lib/coredns/etc
+cat << EOF | sudo tee /var/lib/coredns/etc/Corefile
+.:53 {
+    log
+    errors
+    health
+    ready
+    forward . 24.200.241.37 24.201.245.77
+}
+
+labo.rloc:53 {
+    file /etc/coredns/labo.rloc.db
+    log
+    errors
+}
+EOF
+
+cat << EOF | sudo tee /var/lib/coredns/etc/labo.rloc.db
+; Vérification du format:
+; apt install bind9-utils
+; named-checkzone rloc.db
+
+$ORIGIN rloc.
+$TTL 3600
+@       IN      SOA     dns.labo.rloc. silicone95.proton.me. (
+                        2024030901  ; Serial
+                        7200        ; Refresh
+                        3600        ; Retry
+                        1209600     ; Expire
+                        3600 )      ; Negative Cache TTL
+
+@           IN      NS      dns.labo.rloc.
+ns          IN      A       192.168.50.115
+
+arcade      IN      A       192.168.50.185
+ai          IN      CNAME   arcade.labo.rloc.
+ia          IN      CNAME   arcade.labo.rloc.
+
+motel       IN      A       192.168.50.115
+cloud       IN      CNAME   motel.labo.rloc.
+kubernetes  IN      CNAME   motel.labo.rloc.
+nuage       IN      CNAME   motel.labo.rloc.
+
+routeur     IN      A       192.168.50.1
+EOF
+```
+
+* [Quadlet : Exécution de conteneurs podman sous systemd - Linuxtricks](https://www.linuxtricks.fr/wiki/quadlet-execution-de-conteneurs-podman-sous-systemd)
+* [How to run Podman containers under Systemd with Quadlet - LinuxConfig](https://linuxconfig.org/how-to-run-podman-containers-under-systemd-with-quadlet)
+* [Setup A Simple Homelab DNS Server Using CoreDNS and Docker](https://medium.com/@bensoer/setup-a-private-homelab-dns-server-using-coredns-and-docker-edcfdded841a)
+* [Running CoreDNS as a DNS Server in a Container](https://dev.to/robbmanes/running-coredns-as-a-dns-server-in-a-container-1d0)
 
 ## Déploiement dans k3s
 
@@ -136,6 +195,9 @@ Prendre note que le chart Helm de CoreDNS ne supporte qu'une seule zone. On est 
 On peut tester la syntaxe de la configuration en extrayant les valeurs du `zoneFile` `ici.db` dans un fichier puis en le vérifiant avec `named-checkzone`:
 
 ```shell
+# openSUSE MicroOS
+sudo transactional-update pkg install bind-utils
+# debian
 sudo apt install bind9-utils
 named-checkzone rloc rloc.db
 ```
