@@ -37,7 +37,7 @@ Références
 
 ## Exécution avec Podman
 
-Sous openSUSE MicroOS, on doit activer une règle parefeu `firewalld` pour permettre l'entrée sur 53 en TCP en UDP. `cockpit-firewalld` doit être installé, et on peut gérer les règles sous **Réseau** dans Cockpit.
+Sous openSUSE MicroOS, on doit activer une règle parefeu `firewalld` pour permettre l'entrée sur 53 en TCP en UDP. `cockpit-firewalld` doit être installé, et on peut gérer les règles sous **Réseau > Pare-feu** dans Cockpit. Activer le service `dns` pour débloquer le port TCP 53 et UDP 53.
 
 Pour lancer manuellement CoreDNS avec la configuration par défaut (avec permissions pour exposer le port 53 sur TCP et UDP), pour tester:
 
@@ -120,7 +120,7 @@ EOF
 
 ## Déploiement dans k3s
 
-> Ce déploiement dans k3s implique une perte de service dans certaines situations. Préférer une installation hors k3s via un service podman Quadlet.
+> Ce déploiement dans k3s implique une perte de service dans certaines situations où k3s est hors service. Préférer une installation hors k3s via un service podman Quadlet.
 
 Un serveur DNS est déployé dans `k3s` pour la résolution de noms dans le réseau local, puisque ça semble problématique avec le routeur wifi Asus.
 
