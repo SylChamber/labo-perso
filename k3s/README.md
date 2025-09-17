@@ -6,11 +6,18 @@ Un OS immuable à faible entretien et faible empreinte a été sélectionné pou
 
 ## Règles parefeu
 
-Le port `6443` doit être débloqué pour l'accès distant à l'API de Kubernetes. Dans Cockpit, catégorie Réseau, section Pare-feu, cliquer sur **Modifier les règles et les zones** pour activer dans la zone publique le service `kube-apiserver` sur le port TCP `6443`.
+`k3s` nécessite l'ouverture de ports dans le parefeu afin de fonctionner. Dans Cockpit, sur le serveur, catégorie Réseau, section Pare-feu, cliquer sur **Modifier les règles et les zones** pour activer dans la zone publique les services suivants via le bouton **Ajouter des services**:
 
-De même, pour accéder aux applications exposées par `NodePort`, activer le service `kube-nodeport-services`.
+* `kube-apiserver` pour le port TCP `6443` pour l'accès distant à l'API de Kubernetes
+* `kubelet` pour le port TCP `10250` (utilisé pour les mesures `kubelet`, en particulier par `metrics-server`)
+* `kube-nodeport-services` pour les services `NodePort` de Kubernetes sur les ports `30000-32767`
+* service personnalisé `k3s-flannel-vxlan` (description: `Allows communication between nodes with Flannel VXLAN CNI`) sur port personnalisé UDP `8472` pour Flannel VXLAN
 
-Pour ajouter d'autres nœuds au cluster, il faudra activer les services `kube-*` appropriés.
+Pour ajouter d'autres nœuds au cluster, il faudra activer les services `kube-*` appropriés. De même, si on active le miroir intégré de registres d'images Spegel, il faudra activer les ports TCP appropriés.
+
+Références:
+
+* [Requirements - Networking - docs.k3s.io](https://docs.k3s.io/installation/requirements#networking)
 
 ## GitOps
 
