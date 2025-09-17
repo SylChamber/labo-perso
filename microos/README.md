@@ -115,7 +115,7 @@ systemctl enable --now k3s
   [Service]
   Type=forking
   TimeoutStartSec=120
-  Environment="INSTALL_K3S_EXEC=server --cluster-init --write-kubeconfig-mode=644 --secrets-encryption=true --kube-apiserver-arg enable-admission-plugins=ExtendedResourceToleration --tls-san k3s.rloc,kubernetes.rloc,motel.rloc"
+  Environment="INSTALL_K3S_EXEC=server --cluster-init --write-kubeconfig-mode=644 --secrets-encryption=true --kube-apiserver-arg enable-admission-plugins=ExtendedResourceToleration --tls-san k3s.domicile.internal,kubernetes.domicile.internal,motel.domicile.internal"
   ExecStart=/usr/bin/k3s_installer.sh
   RemainAfterExit=yes
   KillMode=process
