@@ -53,7 +53,9 @@ Au plan du système:
 * serveur DNS
   * vise à faciliter la mise en place d'un réseau local avec des noms de domaine
   * **(fait)** déploiement de CoreDNS sous forme de service systemd avec Podman Quadlet (évolution des [travaux précédents](dns/README.md))
-  * ajout du service coredns comme serveur DNS dans openSUSE MicroOS
+  * analyser comment gérer la configuration CoreDNS selon les principes GitOps
+  * non requis?
+    * ajout du service coredns comme serveur DNS dans openSUSE MicroOS: l'ajout du DNS au routeur devrait être suffisant pour que le serveur interroge son service coredns pour la résolution sur le réseau local
 * serveur de certificats ACME
   * vise à faciliter la gestion des certificats TLS, et sert la même fonction que Let's Encrypt sur un réseau privé
   * déploiement de `step-ca` sous forme de Podman Quadlet (voir notes dans [k3s - Gestion des certificats](k3s/README.md#gestion-des-certificats))
