@@ -39,7 +39,7 @@ Au plan du système:
     * `toolbox` est présent, toutefois
   * **(fait)** ajout des outils réseau dig, nslookup: `bind-utils`
   * **(fait)** ajout de tailscale, outil VPN et d'exposition sur Internet
-  * ajout de [podlet](https://github.com/containers/podlet), qui génère des fichiers Quadlet
+  * **(fait)** ajout de [podlet](https://github.com/containers/podlet), qui génère des fichiers Quadlet
     * en attendant la version récente de podman qui inclut la fonctionnalité
   * tree
 * chiffrement intégral (Full Disk Encryption)
@@ -52,7 +52,8 @@ Au plan du système:
   * sauvegarde automatique dans l'infonuagique des données chiffrées avec rclone (voir des fournisseurs potentiels listés sous [k3s - Sauvegardes](k3s/README.md#sauvegardes))
 * serveur DNS
   * vise à faciliter la mise en place d'un réseau local avec des noms de domaine
-  * déploiement de CoreDNS sous forme de service systemd avec Podman Quadlet (évolution des [travaux précédents](dns/README.md))
+  * **(fait)** déploiement de CoreDNS sous forme de service systemd avec Podman Quadlet (évolution des [travaux précédents](dns/README.md))
+  * ajout du service coredns comme serveur DNS dans openSUSE MicroOS
 * serveur de certificats ACME
   * vise à faciliter la gestion des certificats TLS, et sert la même fonction que Let's Encrypt sur un réseau privé
   * déploiement de `step-ca` sous forme de Podman Quadlet (voir notes dans [k3s - Gestion des certificats](k3s/README.md#gestion-des-certificats))
