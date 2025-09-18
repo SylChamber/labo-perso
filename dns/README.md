@@ -106,6 +106,7 @@ ia          IN      CNAME   arcade.domicile.internal.
 
 motel       IN      A       192.168.50.115
 cloud       IN      CNAME   motel.domicile.internal.
+k3s         IN      CNAME   motel.domicile.internal.
 kubernetes  IN      CNAME   motel.domicile.internal.
 nuage       IN      CNAME   motel.domicile.internal.
 
@@ -220,6 +221,46 @@ systemctl start coredns
 * [Running CoreDNS as a DNS Server in a Container](https://dev.to/robbmanes/running-coredns-as-a-dns-server-in-a-container-1d0)
 * [Container units [Container] - podman-systemd.unit - Podman Documentation](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html#container-units-container)
 
+## Configuration DNS dans le routeur Asus
+
+Il suffit finalement de configurer le routeur Asus avec l'adresse IP de a machine hébergeant CoreDNS.
+
+1. Visiter la page de configuration du routeur Asus, [https://192.168.50.1:8443](https://192.168.50.1:8443)
+2. Aller à la page **Advanced Settings** > **LAN** > **DHCP Server**
+3. Saisir l'adresse IP de la machine hébergeant CoreDNS dans **DNS Server 1**
+4. Tester la résolution de noms sous **Advanced Settings** > **Network Tools** > **Network Analysis**
+
+À noter que le routeur Asus ne permet pas de tester la résolution de noms avec des domaines non conformes à la RFC 1035, comme les domaines inventés pour un réseau local.
+
+Également, Ubuntu peut ne pas tenir compte de la configuration DNS du routeur Asus. On peut avoir à spécifier manuellement un fichier `/etc/resolv.conf` avec l'adresse IP du serveur CoreDNS:
+
+```text
+nameserver 192.168.50.247
+search .
+```
+
+## Test de la configuration DNS
+
+Prendre note que le chart Helm de CoreDNS ne supporte qu'une seule zone. On est donc limité à spécifier la zone racine `.:53`, et on peut donc inclure des zones supplémentaires avec le plugin 'file'.
+
+On peut tester la syntaxe de la configuration en extrayant les valeurs du `zoneFile` `ici.db` dans un fichier puis en le vérifiant avec `named-checkzone`:
+
+```shell
+# openSUSE MicroOS
+sudo transactional-update pkg install bind-utils
+# debian
+sudo apt install bind9-utils
+named-checkzone rloc rloc.db
+```
+
+Pour tester la résolution de noms, il faut utiliser `dig`:
+
+> Ou encore `nslookup` dans les conteneurs `busybox:1.28`.
+
+```shell
+dig @192.168.50.247 motel.rloc
+```
+
 ## Déploiement dans k3s
 
 > Ce déploiement dans k3s implique une perte de service dans certaines situations où k3s est hors service. Préférer une installation hors k3s via un service podman Quadlet.
@@ -298,46 +339,6 @@ sudo ss -tuln | grep 53
 ```
 
 S'il n'y a plus de _stub_ DNS sur `systemd-resolved`, on ne devrait plus voir de service écoutant sur `127.0.0.53:53`.
-
-## Configuration DNS dans le routeur Asus
-
-Il suffit finalement de configurer le routeur Asus avec l'adresse IP de a machine hébergeant CoreDNS.
-
-1. Visiter la page de configuration du routeur Asus, [https://192.168.50.1:8443](https://192.168.50.1:8443)
-2. Aller à la page **Advanced Settings** > **LAN** > **DHCP Server**
-3. Saisir l'adresse IP de la machine hébergeant CoreDNS dans **DNS Server 1**
-4. Tester la résolution de noms sous **Advanced Settings** > **Network Tools** > **Network Analysis**
-
-À noter que le routeur Asus ne permet pas de tester la résolution de noms avec des domaines non conformes à la RFC 1035, comme les domaines inventés pour un réseau local.
-
-Également, Ubuntu peut ne pas tenir compte de la configuration DNS du routeur Asus. On peut avoir à spécifier manuellement un fichier `/etc/resolv.conf` avec l'adresse IP du serveur CoreDNS:
-
-```text
-nameserver 192.168.50.247
-search .
-```
-
-## Test de la configuration DNS
-
-Prendre note que le chart Helm de CoreDNS ne supporte qu'une seule zone. On est donc limité à spécifier la zone racine `.:53`, et on peut donc inclure des zones supplémentaires avec le plugin 'file'.
-
-On peut tester la syntaxe de la configuration en extrayant les valeurs du `zoneFile` `ici.db` dans un fichier puis en le vérifiant avec `named-checkzone`:
-
-```shell
-# openSUSE MicroOS
-sudo transactional-update pkg install bind-utils
-# debian
-sudo apt install bind9-utils
-named-checkzone rloc rloc.db
-```
-
-Pour tester la résolution de noms, il faut utiliser `dig`:
-
-> Ou encore `nslookup` dans les conteneurs `busybox:1.28`.
-
-```shell
-dig @192.168.50.247 motel.rloc
-```
 
 ## Références
 

@@ -20,6 +20,7 @@ ia          IN      CNAME   arcade.domicile.internal.
 
 motel       IN      A       192.168.50.115
 cloud       IN      CNAME   motel.domicile.internal.
+k3s         IN      CNAME   motel.domicile.internal.
 kubernetes  IN      CNAME   motel.domicile.internal.
 nuage       IN      CNAME   motel.domicile.internal.
 
