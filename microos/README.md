@@ -64,7 +64,7 @@ Si on utilise Fuel Ignition pour générer la configuration, voici les informati
 
 ```text
 # paquets additionnels
-bash-completion bind-utils cockpit-firewalld cockpit-selinux distrobox htop glibc-locale kubecolor patterns-microos-cockpit starship syncthing tree vim-small zsh zsh-htmldoc
+bash-completion bind-utils cockpit-firewalld cockpit-selinux distrobox glibc-locale htop jq kubecolor patterns-microos-cockpit setools-console starship syncthing tree vim-small yq zsh zsh-htmldoc
 ```
 
 ### Personnalisation du script combustion
@@ -134,6 +134,22 @@ Cockpit n'est pas installé par défaut dans la version `SelfInstall`. Il faut l
 
 * nom: `sshd.service`
 * enabled: `yes`
+
+## Installation de paquets supplémentaires
+
+MicroOS offre la flexibilité d'ajouter des paquets supplémentaires sans avoir à modifier la configuration initiale, à l'aide de la commande `transactional-update`.
+
+La commande crée un nouveau _snapshot_ `btrfs` qui inclut les paquets ajoutés; au redémarrage sur ce _snapshot_, les paquets ajoutés seront inclus dans le système. Par exemple:
+
+```shell
+sudo transactional-update pkg install jq setools-console tree yq
+```
+
+Il suffira ensuite de redémarrer le serveur.
+
+Références:
+
+* [Administering SLE Micro Using transactional-update](https://documentation.suse.com/sle-micro/6.0/html/Micro-transactional-updates/transactional-updates.html)
 
 ## Installation avec logiciel d'installation (ISO)
 
@@ -227,3 +243,4 @@ Références
   * [Combustion](https://en.opensuse.org/Portal:MicroOS/Combustion)
   * [Full Disk Encryption (FDE)](https://en.opensuse.org/Portal:MicroOS/FDE)
 * [SDB:K3s cluster deployment on MicroOS - openSUSE](https://en.opensuse.org/SDB:K3s_cluster_deployment_on_MicroOS)
+* [Administering SLE Micro Using transactional-update](https://documentation.suse.com/sle-micro/6.0/html/Micro-transactional-updates/transactional-updates.html)
