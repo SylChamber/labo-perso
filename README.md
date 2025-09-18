@@ -41,24 +41,26 @@ Au plan du système:
   * **(fait)** ajout de tailscale, outil VPN et d'exposition sur Internet
   * **(fait)** ajout de [podlet](https://github.com/containers/podlet), qui génère des fichiers Quadlet
     * en attendant la version récente de podman qui inclut la fonctionnalité
-  * **(fait)** tree, jq, yq, setools-console
-* chiffrement intégral (Full Disk Encryption)
+  * **(fait)** `tree`, `jq`, `yq`, `setools-console` (pour `seinfo`)
+* **(bloqué)** chiffrement intégral (Full Disk Encryption)
   * mes tentatives ont été infructueuses, tant avec Leap Micro (erreurs `btrfs` constantes) qu'avec MicroOS (déverrouillage via TPM non fonctionnel)
   * plusieurs tentatives faites avec MicroOS; systemd-crypt ne trouve pas l'appareil TPM2
   * mon serveur ne supporte pas la méthode de stockage par défaut
   * comme je veux les mises à jour automatiques de l'OS, je garde non chiffré pour l'instant
-* sauvegardes
-  * sauvegardes automatiques locales sur mes ordinateurs à l'aide de `syncthing` (déjà utilisé sur mes appareils)
-  * sauvegarde automatique dans l'infonuagique des données chiffrées avec rclone (voir des fournisseurs potentiels listés sous [k3s - Sauvegardes](k3s/README.md#sauvegardes))
-* serveur DNS
+* **(fait)** serveur DNS
   * vise à faciliter la mise en place d'un réseau local avec des noms de domaine
   * **(fait)** déploiement de CoreDNS sous forme de service systemd avec Podman Quadlet (évolution des [travaux précédents](dns/README.md))
-  * analyser comment gérer la configuration CoreDNS selon les principes GitOps
   * non requis?
     * ajout du service coredns comme serveur DNS dans openSUSE MicroOS: l'ajout du DNS au routeur devrait être suffisant pour que le serveur interroge son service coredns pour la résolution sur le réseau local
+* gestion de la configuration des services podman selon les principes GitOps
+  * par exemple, la configuration CoreDNS, puis ACME
+  * évaluer [FetchIt](https://fetchit.readthedocs.io)
 * serveur de certificats ACME
   * vise à faciliter la gestion des certificats TLS, et sert la même fonction que Let's Encrypt sur un réseau privé
   * déploiement de `step-ca` sous forme de Podman Quadlet (voir notes dans [k3s - Gestion des certificats](k3s/README.md#gestion-des-certificats))
+* sauvegardes
+  * sauvegardes automatiques locales sur mes ordinateurs à l'aide de `syncthing` (déjà utilisé sur mes appareils)
+  * sauvegarde automatique dans l'infonuagique des données chiffrées avec rclone (voir des fournisseurs potentiels listés sous [k3s - Sauvegardes](k3s/README.md#sauvegardes))
 
 Les serveurs DNS et de certificats sont des dépendances du cluster Kubernetes. Ils devraient être à tout le moins réalisés rapidement.
 
@@ -88,3 +90,9 @@ Au plan du cluster `k3s`:
 * Albums photos en ligne
   * évaluer les capacités de NextCloud
   * envisager Immich ou un autre produit libre
+
+## Références
+
+* [Quadlet is the key tool that makes Podman better than Docker, and here's how to use it](https://www.xda-developers.com/quadlet-guide/)
+* [Beyond Kubernetes: Podman + Quadlet for Lean, Reliable Containers](https://www.oss-group.co.nz/blog/podman-quadlet)
+* [FetchIt - GitOps-Based Approach of Podman Containers Management](https://fetchit.readthedocs.io)
