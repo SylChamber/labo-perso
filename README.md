@@ -41,7 +41,7 @@ Au plan du système:
   * **(fait)** ajout de tailscale, outil VPN et d'exposition sur Internet
   * **(fait)** ajout de [podlet](https://github.com/containers/podlet), qui génère des fichiers Quadlet
     * en attendant la version récente de podman qui inclut la fonctionnalité
-  * tree
+  * **(fait)** tree, jq, yq, setools-console
 * chiffrement intégral (Full Disk Encryption)
   * mes tentatives ont été infructueuses, tant avec Leap Micro (erreurs `btrfs` constantes) qu'avec MicroOS (déverrouillage via TPM non fonctionnel)
   * plusieurs tentatives faites avec MicroOS; systemd-crypt ne trouve pas l'appareil TPM2
