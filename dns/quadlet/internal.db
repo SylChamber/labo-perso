@@ -19,6 +19,8 @@ ai          IN      CNAME   arcade.internal.
 ia          IN      CNAME   arcade.internal.
 
 motel       IN      A       192.168.50.115
+ca          IN      CNAME   motel.internal.
+certificats IN      CNAME   motel.internal.
 cloud       IN      CNAME   motel.internal.
 k3s         IN      CNAME   motel.internal.
 kubernetes  IN      CNAME   motel.internal.
