@@ -18,13 +18,7 @@ Les avis sont partagés sur le choix d'un nom de domaine pour un réseau local. 
 
 Le seul moyen fiable est d'éviter un domaine inexistant et d'utiliser un sous-domaine d'un domaine réel qui nous appartient. Par exemple: `local.sylchamber.ca`.
 
-Dans un contexte purement interne, pour une résidence, on pourrait envisager:
-
-* `.maison.internal`
-* `.foyer.internal`
-* `.domicile.internal`
-
-C'est sur la 3e option que mon choix se porte: `.domicile.internal`. Le domaine peut être défini comme `domicile.internal` (sans le . en préfixe) dans la configuration d'un routeur Asus sous **Advanced Settings** > **LAN** > **DHCP Server** > **Basic Config** > **RT-AX88U's Domain Name**.
+Dans un contexte purement interne, pour une résidence, mon choix se porte sur `.internal` par simplicité. Le domaine peut être défini comme `internal` (sans le . en préfixe) dans la configuration d'un routeur Asus sous **Advanced Settings** > **LAN** > **DHCP Server** > **Basic Config** > **RT-AX88U's Domain Name**.
 
 Références
 
@@ -76,39 +70,39 @@ cat << EOF | sudo tee /var/lib/coredns/etc/Corefile
     forward . 24.200.241.37 24.201.245.77
 }
 
-domicile.internal:53 {
-    file /etc/coredns/domicile.internal.db
+internal:53 {
+    file /etc/coredns/internal.db
     log
     errors
 }
 EOF
 
-cat << EOF | sudo tee /var/lib/coredns/etc/domicile.internal.db
+cat << EOF | sudo tee /var/lib/coredns/etc/internal.db
 ; Vérification du format:
 ; apt install bind9-utils - zypper install bind-utils
-; named-checkzone domicile.internal.db
+; named-checkzone internal internal.db
 
-\$ORIGIN domicile.internal.
+\$ORIGIN internal.
 \$TTL 3600
-@       IN      SOA     ns.domicile.internal. silicone95.proton.me. (
+@       IN      SOA     ns.internal. silicone95.proton.me. (
                         2024030901  ; Serial
                         7200        ; Refresh
                         3600        ; Retry
                         1209600     ; Expire
                         3600 )      ; Negative Cache TTL
 
-@           IN      NS      ns.domicile.internal.
+@           IN      NS      ns.internal.
 ns          IN      A       192.168.50.115
 
 arcade      IN      A       192.168.50.185
-ai          IN      CNAME   arcade.domicile.internal.
-ia          IN      CNAME   arcade.domicile.internal.
+ai          IN      CNAME   arcade.internal.
+ia          IN      CNAME   arcade.internal.
 
 motel       IN      A       192.168.50.115
-cloud       IN      CNAME   motel.domicile.internal.
-k3s         IN      CNAME   motel.domicile.internal.
-kubernetes  IN      CNAME   motel.domicile.internal.
-nuage       IN      CNAME   motel.domicile.internal.
+cloud       IN      CNAME   motel.internal.
+k3s         IN      CNAME   motel.internal.
+kubernetes  IN      CNAME   motel.internal.
+nuage       IN      CNAME   motel.internal.
 
 routeur     IN      A       192.168.50.1
 EOF
@@ -243,14 +237,14 @@ search .
 
 Prendre note que le chart Helm de CoreDNS ne supporte qu'une seule zone. On est donc limité à spécifier la zone racine `.:53`, et on peut donc inclure des zones supplémentaires avec le plugin 'file'.
 
-On peut tester la syntaxe de la configuration en extrayant les valeurs du `zoneFile` `ici.db` dans un fichier puis en le vérifiant avec `named-checkzone`:
+On peut tester la syntaxe de la configuration en extrayant les valeurs du `zoneFile` `internal.db` dans un fichier puis en le vérifiant avec `named-checkzone`:
 
 ```shell
 # openSUSE MicroOS
 sudo transactional-update pkg install bind-utils
 # debian
 sudo apt install bind9-utils
-named-checkzone rloc rloc.db
+named-checkzone internal internal.db
 ```
 
 Pour tester la résolution de noms, il faut utiliser `dig`:
@@ -258,7 +252,7 @@ Pour tester la résolution de noms, il faut utiliser `dig`:
 > Ou encore `nslookup` dans les conteneurs `busybox:1.28`.
 
 ```shell
-dig @192.168.50.247 motel.rloc
+dig @192.168.50.247 motel.internal
 ```
 
 ## Déploiement dans k3s

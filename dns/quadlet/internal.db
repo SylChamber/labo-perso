@@ -1,0 +1,27 @@
+; Vérification du format:
+; apt install bind9-utils - zypper install bind-utils
+; named-checkzone internal internal.db
+
+$ORIGIN internal.
+$TTL 3600
+@       IN      SOA     ns.internal. silicone95.proton.me. (
+                        2024030901  ; Serial
+                        7200        ; Refresh
+                        3600        ; Retry
+                        1209600     ; Expire
+                        3600 )      ; Negative Cache TTL
+
+@           IN      NS      ns.internal.
+ns          IN      A       192.168.50.115
+
+arcade      IN      A       192.168.50.185
+ai          IN      CNAME   arcade.internal.
+ia          IN      CNAME   arcade.internal.
+
+motel       IN      A       192.168.50.115
+cloud       IN      CNAME   motel.internal.
+k3s         IN      CNAME   motel.internal.
+kubernetes  IN      CNAME   motel.internal.
+nuage       IN      CNAME   motel.internal.
+
+routeur     IN      A       192.168.50.1
