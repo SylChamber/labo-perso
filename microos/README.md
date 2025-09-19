@@ -64,7 +64,7 @@ Si on utilise Fuel Ignition pour générer la configuration, voici les informati
 
 ```text
 # paquets additionnels
-bash-completion bind-utils cockpit-firewalld cockpit-selinux distrobox glibc-locale htop jq kubecolor patterns-microos-cockpit setools-console starship syncthing tree vim-small yq zsh zsh-htmldoc
+bash-completion bind-utils cockpit-firewalld cockpit-selinux distrobox glibc-locale htop jq kubecolor patterns-microos-cockpit rclone rclone-bash-completion rclone-zsh-completion setools-console starship syncthing tree vim-small yq zsh zsh-htmldoc
 ```
 
 ### Personnalisation du script combustion
