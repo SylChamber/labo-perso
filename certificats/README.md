@@ -4,6 +4,21 @@ Les applications sur un réseau local auront besoin de certificats TLS pour le c
 
 Comme c'est une [dépendance du cluster k3s](../k3s/README.md#gestion-des-certificats), déployer sous la forme d'un Podman Quadlet comme service systemd, comme pour [CoreDNS](../dns/README.md).
 
+## Exécution en conteneur pour tests
+
+Afin de tester le fonctionnement et de l'explorer, on peut lancer `step-ca` comme conteneur:
+
+```shell
+podman run -it --rm \
+    -v step:/home/step \
+    -p 9000:9000 \
+    -e "DOCKER_STEPCA_INIT_NAME=SylChamber CA .internal" \
+    -e "DOCKER_STEPCA_INIT_DNS_NAMES=localhost,$(hostname -f)" \
+    -e "DOCKER_STEPCA_INIT_REMOTE_MANAGEMENT=true" \
+    -e "DOCKER_STEPCA_INIT_ACME=true" \
+    smallstep/step-ca
+```
+
 ## Références
 
 * [ACME - Automatic Certificate Management Environment](https://en.wikipedia.org/w/index.php?title=Automatic_Certificate_Management_Environment)
