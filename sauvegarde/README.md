@@ -27,7 +27,7 @@ Les fournisseurs suivants sont envisagés:
 
 ## Sauvegardes sur le réseau local
 
-J'utilise `syncthing` pour la synchronisation des documents entre ordinateurs, et on peut donc s'en servir pour sauvegarder ces synchronisations sur le serveur. `syncthing` a été ajouté à MicroOS.
+J'utilise `syncthing` pour la synchronisation des documents entre ordinateurs, et on peut donc s'en servir pour sauvegarder ces documents sur le serveur. `syncthing` a été ajouté à MicroOS.
 
 Il faut d'abord activer ces services dans les règles parefeu `firewalld` dans Cockpit:
 
@@ -48,7 +48,7 @@ Pour accéder à l'interface web de syncthing sur le serveur, utiliser le `ssh t
 ssh -L 8385:localhost:8384 motel
 ```
 
-on pourra ensuite accéder à syncthing sur le serveur avec l'URL `http://localhost:8385`.
+on pourra ensuite accéder à syncthing sur le serveur avec l'URL locale `http://localhost:8385`.
 
 Références:
 
