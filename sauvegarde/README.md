@@ -25,6 +25,38 @@ Les fournisseurs suivants sont envisagés:
   * le support `rclone` nécessite toutefois WebDav
   * aucun versionnage n'est offert
 
+## Sauvegardes sur le réseau local
+
+J'utilise `syncthing` pour la synchronisation des documents entre ordinateurs, et on peut donc s'en servir pour sauvegarder ces synchronisations sur le serveur. `syncthing` a été ajouté à MicroOS.
+
+Il faut d'abord activer ces services dans les règles parefeu `firewalld` dans Cockpit:
+
+* `syncthing`
+* `syncthing-gui`
+
+Il suffit ensuite d'activer le service `syncthing` système pour l'utilisateur principal (ex. `sylvain`).
+
+> Même comme service système, l'unité systemd distribuée avec le paquet `syncthing` par openSUSE doit être exécuté avec un utilisateur. Par simplicité, on choisit de le faire avec l'utilisateur principal sans privilège.
+
+```shell
+sudo system enable --now syncthing@sylvain
+```
+
+Pour accéder à l'interface web de syncthing sur le serveur, utiliser le `ssh tunneling` pour rediriger le port 8384 du serveur sur la machine locale, et ainsi faciliter la configuration à distance:
+
+```shell
+ssh -L 8385:localhost:8384 motel
+```
+
+on pourra ensuite accéder à syncthing sur le serveur avec l'URL `http://localhost:8385`.
+
+Références:
+
+* [Syncthing - Getting Started](https://docs.syncthing.net/intro/getting-started.html)
+* [Syncthing - Starting Syncthing automatically](https://docs.syncthing.net/users/autostart.html#linux)
+* [Syncthing - Firewall Setup](https://docs.syncthing.net/users/firewall.html#firewall-setup)
+* [Accessing GUI when you have 2 machines running Syncthing on your network - r/Syncthing](https://www.reddit.com/r/Syncthing/comments/xpp3ky/accessing_gui_when_you_have_2_machines_running/)
+
 ## Références
 
 * [Comparatif des meilleurs stockages cloud en 2025 : lequel choisir ? - 01net.com](https://www.01net.com/cloud/)
