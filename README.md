@@ -14,7 +14,7 @@ Le déploiement via des charts Helm sera privilégié plutôt que par les opéra
 
 ## État actuel
 
-Le serveur a été [configuré avec openSUSE MicroOS](microos/README.md), une installation personnalisée avec `k3s`, pour les raisons suivantes:
+Le serveur a été [configuré avec openSUSE MicroOS](docs/microos/README.md), une installation personnalisée avec `k3s`, pour les raisons suivantes:
 
 * le projet Cayo d'Universal Blue (basé sur `bootc`), bien qu'intéressant, est en développement depuis peu
 * MicroOS existe depuis plusieurs années
@@ -49,7 +49,7 @@ Au plan du système:
   * comme je veux les mises à jour automatiques de l'OS, je garde non chiffré pour l'instant
 * **(fait)** serveur DNS
   * vise à faciliter la mise en place d'un réseau local avec des noms de domaine
-  * **(fait)** déploiement de CoreDNS sous forme de service systemd avec Podman Quadlet (évolution des [travaux précédents](dns/README.md))
+  * **(fait)** déploiement de CoreDNS sous forme de service systemd avec Podman Quadlet (évolution des [travaux précédents](docs/dns/README.md))
   * non requis?
     * ajout du service coredns comme serveur DNS dans openSUSE MicroOS: l'ajout du DNS au routeur devrait être suffisant pour que le serveur interroge son service coredns pour la résolution sur le réseau local
 * gestion de la configuration des services podman selon les principes GitOps
@@ -57,10 +57,10 @@ Au plan du système:
   * évaluer [FetchIt](https://fetchit.readthedocs.io)
 * serveur de certificats ACME
   * vise à faciliter la gestion des certificats TLS, et sert la même fonction que Let's Encrypt sur un réseau privé
-  * déploiement de `step-ca` sous forme de Podman Quadlet (voir notes dans [k3s - Gestion des certificats](k3s/README.md#gestion-des-certificats))
+  * déploiement de `step-ca` sous forme de Podman Quadlet (voir notes dans [k3s - Gestion des certificats](docs/k3s/README.md#gestion-des-certificats))
 * sauvegardes
   * sauvegardes automatiques locales sur mes ordinateurs à l'aide de `syncthing` (déjà utilisé sur mes appareils)
-  * sauvegarde automatique dans l'infonuagique des données chiffrées avec rclone (voir des fournisseurs potentiels listés sous [k3s - Sauvegardes](k3s/README.md#sauvegardes))
+  * sauvegarde automatique dans l'infonuagique des données chiffrées avec rclone (voir des fournisseurs potentiels listés sous [k3s - Sauvegardes](docs/k3s/README.md#sauvegardes))
 
 Les serveurs DNS et de certificats sont des dépendances du cluster Kubernetes. Ils devraient être à tout le moins réalisés rapidement.
 
@@ -77,7 +77,7 @@ Au plan du cluster `k3s`:
 * mises à niveau automatisées de `k3s`
   * déploiement du System Upgrade Controller Rancher par GitOps
 * outillage d'observabilité
-  * évaluer Pixie, conçu pour les déploiements _edge_ (voir les notes dans [k3s - Observabilité](k3s/README.md#observabilité))
+  * évaluer Pixie, conçu pour les déploiements _edge_ (voir les notes dans [k3s - Observabilité](docs/k3s/README.md#observabilité))
 * Nextcloud, plateforme autohébergée de stockage et de partage
 * Tunnel d'exposition de services sur Internet
   * explorer les options, par exemple CloudFlare Tunnels
@@ -96,3 +96,5 @@ Au plan du cluster `k3s`:
 * [Quadlet is the key tool that makes Podman better than Docker, and here's how to use it](https://www.xda-developers.com/quadlet-guide/)
 * [Beyond Kubernetes: Podman + Quadlet for Lean, Reliable Containers](https://www.oss-group.co.nz/blog/podman-quadlet)
 * [FetchIt - GitOps-Based Approach of Podman Containers Management](https://fetchit.readthedocs.io)
+* [podman-kube-play man page - create podman resources based on Kubernetes YAML](https://docs.podman.io/en/latest/markdown/podman-kube-play.1.html)
+* [podman-kube-generate man page - generate Kubernetes YAML from podman resources](https://docs.podman.io/en/latest/markdown/podman-kube-generate.1.html)
