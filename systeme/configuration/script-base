@@ -20,6 +20,9 @@ zypper --non-interactive addlocale fr_CA
 # download k3s installer
 curl -L --output k3s_installer.sh https://get.k3s.io && install -m755 k3s_installer.sh /usr/bin/
 
+# install FetchIt setup script
+install -m 755 fetchit-setup.sh /usr/bin/
+
 # Leave a marker
 echo "Configured with combustion" > /etc/issue.d/combustion
 

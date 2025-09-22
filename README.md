@@ -1,6 +1,6 @@
 # Laboratoire personnel
 
-Ce dépôt contient le code de déploiement de mon laboratoire personnel. Il est centré sur un miniserveur modeste de type Mini PC usagé.
+Ce dépôt contient le code de déploiement de mon laboratoire personnel selon les principes GitOps. Il est centré sur un miniserveur modeste de type Mini PC usagé.
 
 * L'OS léger de type «immuable» a été sélectionné pour limiter les efforts d'entretien
 * La distribution Kubernetes légère `k3s` est installée comme principale plateforme d'exécution
@@ -54,7 +54,7 @@ Au plan du système:
     * ajout du service coredns comme serveur DNS dans openSUSE MicroOS: l'ajout du DNS au routeur devrait être suffisant pour que le serveur interroge son service coredns pour la résolution sur le réseau local
 * gestion de la configuration des services podman selon les principes GitOps
   * par exemple, la configuration CoreDNS, puis ACME
-  * évaluer [FetchIt](https://fetchit.readthedocs.io)
+  * installer [FetchIt](https://fetchit.readthedocs.io) et ajouter à la configuration système
 * serveur de certificats ACME
   * vise à faciliter la gestion des certificats TLS, et sert la même fonction que Let's Encrypt sur un réseau privé
   * déploiement de `step-ca` sous forme de Podman Quadlet (voir notes dans [k3s - Gestion des certificats](docs/k3s/README.md#gestion-des-certificats))

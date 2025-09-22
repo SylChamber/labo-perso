@@ -1,0 +1,15 @@
+[Unit]
+Description=Run k3s installer
+Wants=network-online.target
+After=network.target network-online.target
+ConditionPathExists=/usr/bin/k3s_installer.sh
+ConditionPathExists=!/usr/local/bin/k3s
+[Service]
+Type=forking
+TimeoutStartSec=120
+Environment="INSTALL_K3S_EXEC=server --cluster-init --write-kubeconfig-mode=644 --secrets-encryption=true --kube-apiserver-arg enable-admission-plugins=ExtendedResourceToleration --tls-san k3s.internal,kubernetes.internal,motel.internal"
+ExecStart=/usr/bin/k3s_installer.sh
+RemainAfterExit=yes
+KillMode=process
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,14 @@
+[Unit]
+Description=Setup FetchIt - GitOps-Based Approach of Podman Containers Management
+Wants=network-online.target
+After=network.target network-online.target
+ConditionPathExists=!/etc/systemd/system/fetchit.service
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/fetchit-setup.sh
+RemainAfterExit=yes
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
