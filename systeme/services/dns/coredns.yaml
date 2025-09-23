@@ -1,0 +1,95 @@
+# Déploie CoreDNS en conteneur; destiné pour exécution avec podman kube play
+##########################
+# Configuration de CoreDNS
+# ConfigMap généré à partir des fichiers de configuration avec:
+# kubectl create cm coredns --from-file=Corefile=Corefile \
+#   --from-file=internal.db=internal.db \
+#   --dry-run=client -o yaml
+apiVersion: v1
+data:
+  Corefile: |
+    .:53 {
+        log
+        errors
+        health
+        ready
+        forward . 24.200.241.37 24.201.245.77
+    }
+
+    internal:53 {
+        file /etc/coredns/internal.db
+        log
+        errors
+    }
+  internal.db: |
+    ; Vérification du format:
+    ; apt install bind9-utils - zypper install bind-utils
+    ; named-checkzone internal internal.db
+
+    $ORIGIN internal.
+    $TTL 3600
+    @       IN      SOA     ns.internal. silicone95.proton.me. (
+                            2024030901  ; Serial
+                            7200        ; Refresh
+                            3600        ; Retry
+                            1209600     ; Expire
+                            3600 )      ; Negative Cache TTL
+
+    @           IN      NS      ns.internal.
+    ns          IN      A       192.168.50.115
+
+    arcade      IN      A       192.168.50.185
+    ai          IN      CNAME   arcade.internal.
+    ia          IN      CNAME   arcade.internal.
+
+    motel       IN      A       192.168.50.115
+    ca          IN      CNAME   motel.internal.
+    certificats IN      CNAME   motel.internal.
+    cloud       IN      CNAME   motel.internal.
+    k3s         IN      CNAME   motel.internal.
+    kubernetes  IN      CNAME   motel.internal.
+    nuage       IN      CNAME   motel.internal.
+
+    routeur     IN      A       192.168.50.1
+kind: ConfigMap
+metadata:
+  labels:
+    app: coredns
+  name: coredns
+---
+# Déploiement de CoreDNS sous forme de pod
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: coredns
+  name: coredns
+spec:
+  containers:
+    - name: coredns
+      args:
+        - -conf
+        - /etc/coredns/Corefile
+      image: docker.io/coredns/coredns:1.12.4
+      ports:
+        - containerPort: 53
+          hostPort: 5353
+        - containerPort: 53
+          hostPort: 5353
+          protocol: UDP
+      # sauf pour limit cpu, valeurs tirées de coredns dans k3s
+      resources:
+        limits:
+          cpu: 200m
+          memory: 170Mi
+        requests:
+          cpu: 100m
+          memory: 70Mi
+      volumeMounts:
+        - name: coredns-config
+          mountPath: /etc/coredns
+  restartPolicy: Always
+  volumes:
+    - name: coredns-config
+      configMap:
+        name: coredns

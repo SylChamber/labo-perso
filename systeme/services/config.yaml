@@ -1,0 +1,9 @@
+# Déploiement via GitOps de conteneurs Podman avec FetchIt
+targetConfigs:
+# Déploiement de CoreDNS
+- url: https://github.com/SylChamber/labo-perso
+  kube:
+  - name: coredns
+    targetPath: systeme/services/dns
+    schedule: "*/3 * * * *"
+  branch: main

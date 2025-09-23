@@ -4,3 +4,5 @@ Ce dossier contient le code d'automatisation du système (du serveur):
 
 * [configuration](configuration/README.md) (et installation) de l'OS
 * déploiement des services systemd (par GitOps)
+
+Le déploiement se fait à l'aide de FetchIt dont l'installation via conteneur podman se fait sous [configuration](configuration/README.md).
