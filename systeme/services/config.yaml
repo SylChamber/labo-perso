@@ -2,8 +2,15 @@
 targetConfigs:
 # Déploiement de CoreDNS
 - url: https://github.com/SylChamber/labo-perso
-  kube:
-  - name: coredns
-    targetPath: systeme/services/dns
-    schedule: "*/3 * * * *"
   branch: main
+  systemd:
+  - name: coredns
+    targetPath: systeme/services/dns/systemd
+    schedule: "*/3 * * * *"
+- url: https://github.com/SylChamber/labo-perso
+  branch: main
+  filetransfer:
+  - name: coredns-config
+    targetPath: systeme/services/dns/configuration
+    destinationDirectory: /etc/coredns
+    schedule: "*/3 * * * *"

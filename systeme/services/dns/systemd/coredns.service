@@ -1,0 +1,32 @@
+[Unit]
+Wants=network-online.target
+After=network-online.target
+Description=CoreDNS - DNS and Service Discovery
+Documentation=https://coredns.io/manual/
+SourcePath=/etc/containers/systemd/coredns.container
+RequiresMountsFor=%t/containers
+RequiresMountsFor=/var/lib/coredns/etc
+
+[X-Container]
+ContainerName=coredns
+Exec=-conf /etc/coredns/Corefile
+Image=coredns/coredns:1.12.4
+PublishPort=53:53
+PublishPort=53:53/udp
+Volume=/var/lib/coredns/etc:/etc/coredns:ro
+
+[Service]
+Restart=always
+Environment=PODMAN_SYSTEMD_UNIT=%n
+KillMode=mixed
+ExecStop=/usr/bin/podman rm -v -f -i coredns
+ExecStopPost=-/usr/bin/podman rm -v -f -i coredns
+Delegate=yes
+Type=notify
+NotifyAccess=all
+SyslogIdentifier=%N
+ExecStartPre=/usr/bin/mkdir -p /etc/coredns/ && /usr/bin/chcon -t container_file_t -R /etc/coredns
+ExecStart=/usr/bin/podman run --name coredns --replace --rm --cgroups=split --sdnotify=conmon -d -v /var/lib/coredns/etc:/etc/coredns:ro --publish 53:53 --publish 53:53/udp coredns/coredns:1.12.4 -conf /etc/coredns/Corefile
+
+[Install]
+WantedBy=default.target
