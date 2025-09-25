@@ -68,7 +68,7 @@ metadata:
   name: coredns
 spec:
   containers:
-    - name: coredns
+    - name: coredns-app
       args:
         - -conf
         - /etc/coredns/Corefile
