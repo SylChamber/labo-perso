@@ -52,12 +52,15 @@ Au plan du système:
   * **(fait)** déploiement de CoreDNS sous forme de service systemd avec Podman Quadlet (évolution des [travaux précédents](docs/dns/README.md))
   * non requis?
     * ajout du service coredns comme serveur DNS dans openSUSE MicroOS: l'ajout du DNS au routeur devrait être suffisant pour que le serveur interroge son service coredns pour la résolution sur le réseau local
-* gestion de la configuration des services podman selon les principes GitOps
-  * par exemple, la configuration CoreDNS, puis ACME
+* **(fait)** gestion de la configuration des services podman selon les principes GitOps
+  * l'objectif est d'automatiser les services prérequis au cluster k3s:
+    * CoreDNS
+    * ACME
   * installer [FetchIt](https://fetchit.readthedocs.io) et ajouter à la configuration système
+* **(fait)** redéploiement du serveur DNS par GitOps
 * serveur de certificats ACME
   * vise à faciliter la gestion des certificats TLS, et sert la même fonction que Let's Encrypt sur un réseau privé
-  * déploiement de `step-ca` sous forme de Podman Quadlet (voir notes dans [k3s - Gestion des certificats](docs/k3s/README.md#gestion-des-certificats))
+  * déploiement de `step-ca` sous forme de conteneur (voir notes dans [k3s - Gestion des certificats](docs/k3s/README.md#gestion-des-certificats))
 * sauvegardes
   * sauvegardes automatiques locales sur mes ordinateurs à l'aide de `syncthing` (déjà utilisé sur mes appareils)
   * sauvegarde automatique dans l'infonuagique des données chiffrées avec rclone (voir des fournisseurs potentiels listés sous [k3s - Sauvegardes](docs/k3s/README.md#sauvegardes))
