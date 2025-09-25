@@ -1,3 +1,6 @@
+configReload:
+  configURL: https://raw.githubusercontent.com/SylChamber/labo-perso/main/systeme/services/config.yaml
+  schedule: "*/5 * * * *"
 # Déploiement via GitOps de conteneurs Podman avec FetchIt
 targetConfigs:
 # Déploiement de CoreDNS
