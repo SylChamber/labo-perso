@@ -55,12 +55,14 @@ kind: ConfigMap
 metadata:
   labels:
     app: coredns
-  name: coredns
+  name: coredns-config
 ---
 # Déploiement de CoreDNS sous forme de pod
 apiVersion: v1
 kind: Pod
 metadata:
+  annotations:
+    io.podman.annotations.userns: host
   labels:
     app: coredns
   name: coredns
@@ -72,10 +74,9 @@ spec:
         - /etc/coredns/Corefile
       image: docker.io/coredns/coredns:1.12.4
       ports:
+        # en utilisant le network hôte 'hostNetwork', on ne doit pas mapper des ports avec 'hostPort'
         - containerPort: 53
-          hostPort: 5353
         - containerPort: 53
-          hostPort: 5353
           protocol: UDP
       # sauf pour limit cpu, valeurs tirées de coredns dans k3s
       resources:
@@ -96,8 +97,12 @@ spec:
       volumeMounts:
         - name: coredns-config
           mountPath: /etc/coredns
+  # requis pour exposer le port 53 sur l'hôte, sinon ça entre en conflit avec le réseau podman qui expose aussi 53
+  # https://github.com/containers/podman/issues/19108
+  # https://github.com/containers/podman/issues/21019
+  hostNetwork: true
   restartPolicy: Always
   volumes:
     - name: coredns-config
       configMap:
-        name: coredns
+        name: coredns-config
