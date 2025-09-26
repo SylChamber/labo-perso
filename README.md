@@ -61,6 +61,9 @@ Au plan du système:
 * serveur de certificats ACME
   * vise à faciliter la gestion des certificats TLS, et sert la même fonction que Let's Encrypt sur un réseau privé
   * déploiement de `step-ca` sous forme de conteneur (voir notes dans [k3s - Gestion des certificats](docs/k3s/README.md#gestion-des-certificats))
+  * pour utiliser un domaine spécifique à `step-ca` avec SNI, envisager le déploiement d'un proxy léger comme Caddy ou Traefik, ou de déployer dans k3s
+* activation du [DNS over TLS](https://en.m.wikipedia.org/wiki/DNS_over_TLS) dans CoreDNS
+  * les appareils Android utilisent le mode «DNS privé» par défaut; pour qu'ils utilisent le DNS du réseau local, il faut [activer le support DNS over TLS dans CoreDNS](https://bartonbytes.com/posts/how-to-configure-coredns-for-dns-over-tls/) avec le [plugin tls](https://coredns.io/plugins/tls/)
 * sauvegardes
   * sauvegardes automatiques locales sur mes ordinateurs à l'aide de `syncthing` (déjà utilisé sur mes appareils)
   * sauvegarde automatique dans l'infonuagique des données chiffrées avec rclone (voir des fournisseurs potentiels listés sous [k3s - Sauvegardes](docs/k3s/README.md#sauvegardes))
