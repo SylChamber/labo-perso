@@ -168,6 +168,8 @@ Il est préférable de contrôler ses propres certificats, mais la gestion manue
 
 Il est préférable de déployer `step-ca` en dehors de Kubernetes puisque c'est une dépendance du cluster. Il existe en image conteneur. Envisager de l'installer comme quadlet Podman dans openSUSE MicroOS.
 
+> L'ennui avec cette approche, c'est la nécessité de déployer un proxy pour transférer les requêtes à un domaine sans port par SNI. Comme il y a déjà un proxy dans k3s, aussi bien déployer dans k3s. Le cluster n'a pas besoin d'utiliser l'autorité de certificat à l'installation.
+
 ## Expositions d'applications avec Ingress API
 
 L'API Ingress de Kubernetes permet de rediriger les requêtes HTTP selon le domaine, avec [SNI](https://fr.wikipedia.org/wiki/Server_Name_Indication). k3s supporte nativement la fonctionnalité avec Traefik.
