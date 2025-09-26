@@ -58,10 +58,6 @@ Au plan du système:
     * ACME
   * installer [FetchIt](https://fetchit.readthedocs.io) et ajouter à la configuration système
 * **(fait)** redéploiement du serveur DNS par GitOps
-* serveur de certificats ACME
-  * vise à faciliter la gestion des certificats TLS, et sert la même fonction que Let's Encrypt sur un réseau privé
-  * déploiement de `step-ca` sous forme de conteneur (voir notes dans [k3s - Gestion des certificats](docs/k3s/README.md#gestion-des-certificats))
-  * pour utiliser un domaine spécifique à `step-ca` avec SNI, envisager le déploiement d'un proxy léger comme Caddy ou Traefik, ou de déployer dans k3s
 * activation du [DNS over TLS](https://en.m.wikipedia.org/wiki/DNS_over_TLS) dans CoreDNS
   * les appareils Android utilisent le mode «DNS privé» par défaut; pour qu'ils utilisent le DNS du réseau local, il faut [activer le support DNS over TLS dans CoreDNS](https://bartonbytes.com/posts/how-to-configure-coredns-for-dns-over-tls/) avec le [plugin tls](https://coredns.io/plugins/tls/)
 * sauvegardes
@@ -72,6 +68,10 @@ Les serveurs DNS et de certificats sont des dépendances du cluster Kubernetes. 
 
 Au plan du cluster `k3s`:
 
+* serveur de certificats ACME
+  * vise à faciliter la gestion des certificats TLS, et sert la même fonction que Let's Encrypt sur un réseau privé
+  * déploiement de `step-ca` sous forme de conteneur (voir notes dans [k3s - Gestion des certificats](docs/k3s/README.md#gestion-des-certificats))
+  * à déployer dans k3s pour bénéficier d'un domaine spécifique à `step-ca` avec SNI, et d'éviter la nécessité de déployer d'un proxy dans le système alors que k3s en dispose d'un
 * gestion des certificats avec `cert-manager`
   * déploiement avec un Helm Chart par le biais du Helm Controller de `k3s`
   * utilisation de `step-ca` pour provisionner les certificats
