@@ -168,6 +168,14 @@ Il est préférable de contrôler ses propres certificats, mais la gestion manue
 
 Il est préférable de déployer `step-ca` en dehors de Kubernetes puisque c'est une dépendance du cluster. Il existe en image conteneur. Envisager de l'installer comme quadlet Podman dans openSUSE MicroOS.
 
+## Expositions d'applications avec Ingress API
+
+L'API Ingress de Kubernetes permet de rediriger les requêtes HTTP selon le domaine, avec [SNI](https://fr.wikipedia.org/wiki/Server_Name_Indication). k3s supporte nativement la fonctionnalité avec Traefik.
+
+> Kubernetes a adopté une nouvelle API plus flexible, Gateway API, mais elle n'est pas requises pour les besoins ici.
+
+Définir un `Ingress` qui fait le routage selon le domaine via SNI est très simple. Voir [ingress/apps-ingress.yaml](ingress/apps-ingress.yaml) comme exemple d'`Ingress` qui fait le routage pour les applications [ingress/app1.yaml](ingress/app1.yaml) et [ingress/app2.yaml](ingress/app2.yaml).
+
 ## Sauvegardes
 
 `k3s` utilise une BD SQLite par défaut, il n'y a donc pas de BD `etcd` à sauvegarder. Il n'y a que des fichiers à sauvegarder:
