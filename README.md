@@ -78,7 +78,8 @@ Au plan du cluster `k3s`:
 * déploiement en continu GitOps, avec Argo CD
   * déploiement d'Argo CD avec un Helm Chart par le biais du Helm Controller
 * évaluer le routage avec Gateway API plutôt qu'Ingress
-  * voir [Clarification on Traefik Ingress in k3s - Gateway API vs. Ingress Resource - k3s-io/k3s](https://github.com/k3s-io/k3s/discussions/11100)
+  * pour l'activer dans Traefik: [Clarification on Traefik Ingress in k3s - Gateway API vs. Ingress Resource - k3s-io/k3s](https://github.com/k3s-io/k3s/discussions/11100)
+  * pour l'utilisation dans Traefik: [Traefik & Kubernetes with Gateway API - Traefik Documentation](https://doc.traefik.io/traefik/v3.5/reference/routing-configuration/kubernetes/gateway-api/)
 * sécurité améliorée des pods avec le profil `Restricted` de Pod Security Standards
 * gestion sécuritaire du redémarrage Kubernetes avec [Kured](https://kured.dev/)
   * déterminer si c'est requis
