@@ -77,6 +77,8 @@ Au plan du cluster `k3s`:
   * utilisation de `step-ca` pour provisionner les certificats
 * déploiement en continu GitOps, avec Argo CD
   * déploiement d'Argo CD avec un Helm Chart par le biais du Helm Controller
+* évaluer le routage avec Gateway API plutôt qu'Ingress
+  * voir [Clarification on Traefik Ingress in k3s - Gateway API vs. Ingress Resource - k3s-io/k3s](https://github.com/k3s-io/k3s/discussions/11100)
 * sécurité améliorée des pods avec le profil `Restricted` de Pod Security Standards
 * gestion sécuritaire du redémarrage Kubernetes avec [Kured](https://kured.dev/)
   * déterminer si c'est requis
