@@ -44,3 +44,7 @@
 # clés SSH publiques copiées par le script de génération du script de combustion
 microos/combustion/script
 microos/combustion/*.pub
+
+# secrets
+.key
+.password
