@@ -10,12 +10,14 @@ Il sera déployé dans Kubernetes car c'est plus simple, et il sera possible de 
 
 Afin de tester le fonctionnement et de l'explorer, on peut lancer `step-ca` comme conteneur:
 
+> `dnsdomainname` retourne le domaine rapporté par le DNS; ici, `internal`, tel qu'il est configuré dans le routeur.
+
 ```shell
 podman run -it --rm \
     -v step:/home/step \
     -p 9000:9000 \
     -e "DOCKER_STEPCA_INIT_NAME=SylChamber CA .internal" \
-    -e "DOCKER_STEPCA_INIT_DNS_NAMES=localhost,$(hostname -f)" \
+    -e "DOCKER_STEPCA_INIT_DNS_NAMES=localhost,$(hostname -f),ca.$(dnsdomainname)" \
     -e "DOCKER_STEPCA_INIT_REMOTE_MANAGEMENT=true" \
     -e "DOCKER_STEPCA_INIT_ACME=true" \
     smallstep/step-ca
