@@ -32,7 +32,7 @@ step ca init --helm
 
 Cette commande lancera un assistant pour générer un fichier `values.yaml` pour le chart Helm:
 
-> Si on modifie `ca.dns` ou `--dns` ou comme option de commande, il faut ajouter tout domaine pouvant être utilisé à l'interne dans Kubernetes (tel qu'indiqué dans le README du chart). Ici, on présume un nom de _release_ `ac` et un déploiement dans le _namespace_ `step-ca`.
+> Si on modifie `ca.dns` ou `--dns` ou comme option de commande, il faut ajouter tout domaine pouvant être utilisé à l'interne dans Kubernetes (tel qu'indiqué dans le README du chart). Ici, on présume un nom de _release_ `acme` et un déploiement dans le _namespace_ `step-ca`.
 
 ```shell
 > step ca init --helm
@@ -40,7 +40,7 @@ Cette commande lancera un assistant pour générer un fichier `values.yaml` pour
 What would you like to name your new PKI?
 ✔ (e.g. Smallstep): SylChamber
 What DNS names or IP addresses will clients use to reach your CA?
-✔ (e.g. ca.example.com[,10.1.2.3,etc.]): ca.internal,ac.internal,ac-step-certificates.step-ca.svc.cluster.local,127.0.0.1
+✔ (e.g. ca.example.com[,10.1.2.3,etc.]): ca.internal,ac.internal,acme-step-certificates.step-ca.svc.cluster.local,127.0.0.1
 What IP and port will your new CA bind to (it should match service.targetPort)?
 ✔ (e.g. :443 or 127.0.0.1:443): :9100
 What would you like to name the CA's first provisioner?
@@ -68,13 +68,13 @@ step ca init --helm --deployment-type=standalone \
 --name SylChamber \
 --dns=ca.internal \
 --dns=ac.internal \
---dns=ac-step-certificates.step-ca.svc.cluster.local \
+--dns=acme-step-certificates.step-ca.svc.cluster.local \
 --dns=127.0.0.1 \
 --acme \
 --address=:9100 \
 --provisioner=moi@proton.me \
 --password-file=provisioner-password \
---provisioner-password-file=provisioner-password
+--provisioner-password-file=$HOME/tmp/provisioner-password
 ```
 
 Le fichier `values.yaml` généré incluera les certificats publics racine et intermédiaire, ainsi que les certificats privés sous une forme chiffrée. Toutefois, le fichier n'inclut pas le mot de passe utilisé pour chiffrer les clés, ni le mot de passe du provisionneur par défaut (les instructions de déploiement utilisent le même mot de passe pour les deux). Ils doivent être injectés par la ligne de commande `helm install`.
