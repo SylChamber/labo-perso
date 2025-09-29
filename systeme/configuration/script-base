@@ -12,7 +12,7 @@ systemd-firstboot --force --keymap=ca-multix
 systemd-firstboot --force --timezone=America/Toronto
 
 # Man pages pas installées; peut-être à générer
-zypper --non-interactive install bash-completion bind-utils cockpit-firewalld cockpit-selinux distrobox glibc-locale htop jq kubecolor patterns-microos-cockpit rclone-bash-completion rclone-zsh-completion setools-console starship syncthing tree vim-small yq zsh zsh-htmldoc
+zypper --non-interactive install bash-completion bind-utils cockpit-firewalld cockpit-selinux distrobox git git-credential-oauth glibc-locale htop jq kubecolor patterns-microos-cockpit rclone-bash-completion rclone-zsh-completion setools-console starship syncthing tree vim-small yq zsh zsh-htmldoc
 
 # install additional packages for localization
 zypper --non-interactive addlocale fr_CA
@@ -22,6 +22,9 @@ curl -L --output k3s_installer.sh https://get.k3s.io && install -m755 k3s_instal
 
 # install FetchIt setup script
 install -m 755 fetchit-setup.sh /usr/bin/
+
+# install go-task
+sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/bin
 
 # Leave a marker
 echo "Configured with combustion" > /etc/issue.d/combustion

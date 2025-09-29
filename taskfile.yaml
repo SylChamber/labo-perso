@@ -1,4 +1,7 @@
 # https://taskfile.dev
+# Sous MicroOS, utiliser le script d'installation:
+# sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+# ou installer sous /usr/bin à l'installation de MicroOS
 
 version: '3'
 
