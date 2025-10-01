@@ -1,10 +1,18 @@
 # Gestion des certificats
 
-Les applications sur un réseau local auront besoin de certificats TLS pour le chiffrement des communications. Afin d'éviter de créer manuellement une autorité de certificat puis les certificats subséquents, déployer le serveur ACME et d'autorité privée de certrificat [step-ca](https://github.com/smallstep/certificates).
+Les applications sur un réseau local auront besoin de certificats TLS pour le chiffrement des communications. Afin d'éviter de gérer manuellement une autorité de certificat puis les certificats subséquents, le serveur ACME et d'autorité privée de certrificat [step-ca](https://github.com/smallstep/certificates) sera déployé.
 
-Il sera déployé dans Kubernetes car c'est plus simple, et il sera possible de définir un domaine sans port (avec SNI) pour y accéder.
+Il le sera dans Kubernetes car c'est plus simple, et il sera possible de définir un domaine sans port (avec SNI) pour y accéder.
 
 > Comme indiqué dans les instructions d'installation de step-ca pour Kubernetes, envisager de déployer [autocert](https://github.com/smallstep/autocert), un addiciel Kubernetes permettant l'injection automatique de certificats dans les conteneurs et ainsi permettre le mTLS dans Kubernetes. À voir s'il est utile si on utilise cert-manager.
+
+Toutefois, les certificats étant omniprésents dans les communications sur un réseau local, la priorité est de créer une autorité de certificat racine privée à l'aide de la CLI `step`, ainsi qu'une autorité intermédiaire. Les deux autorités pourront être utilisées dans la configuration de `step-ca`.
+
+## Création d'autorités privées de certificat racine et intermédiaires
+
+Bien qu'on puisse créer manuellement des autorités de certificat à l'aide de la CLI `openssl`, l'opération est plus simple à l'aide de la CLI `step`.
+
+> Voir le dossier `examples/certificate_authority_single_instance` du chart Helm [step-certificates](https://artifacthub.io/packages/helm/smallstep/step-certificates) sur ArtifactHUB pour un exemple de création d'autorités racine et intermédiaire.
 
 ## Exécution en conteneur pour tests
 
@@ -16,7 +24,7 @@ Afin de tester le fonctionnement et de l'explorer, on peut lancer `step-ca` comm
 podman run -it --rm \
     -v step:/home/step \
     -p 9000:9000 \
-    -e "DOCKER_STEPCA_INIT_NAME=SylChamber CA .internal" \
+    -e "DOCKER_STEPCA_INIT_NAME=SylChamber" \
     -e "DOCKER_STEPCA_INIT_DNS_NAMES=localhost,$(hostname -f),ca.$(dnsdomainname)" \
     -e "DOCKER_STEPCA_INIT_REMOTE_MANAGEMENT=true" \
     -e "DOCKER_STEPCA_INIT_ACME=true" \
@@ -106,7 +114,7 @@ ensuite installer `step-ca` dans Kubernetes:
 
 * [ACME - Automatic Certificate Management Environment](https://en.wikipedia.org/w/index.php?title=Automatic_Certificate_Management_Environment)
 * [Self-Host ACME Server](https://blog.sean-wright.com/self-host-acme-server/)
-* [Run your own private CA & ACME server using step-ca](https://smallstep.com/blog/private-acme-server/)
+* [Run your own private CA & ACME server using step-ca](https://smallstep.com/blog/private-acme-server/) (les liens sont désuets, voir les liens ci-dessous)
 * [step-ca - Github](https://github.com/smallstep/certificates)
 * [step-ca Documentation](https://smallstep.com/docs/step-ca/)
   * [step-ca Installation](https://smallstep.com/docs/step-ca/installation/#kubernetes)

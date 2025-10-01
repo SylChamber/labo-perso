@@ -48,3 +48,4 @@ microos/combustion/*.pub
 # secrets
 .key
 .password
+/certs/*

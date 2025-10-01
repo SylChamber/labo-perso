@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+# Crée des autorités privées de certificat racine et intermédiaire pour le réseau local
+
+set -eo pipefail
+
+if ! command -v step >/dev/null 2>&1 ; then
+    echo "step est requis pour créer des autorités de certificat."
+    exit 1
+fi
+
+SCRIPT_DIR=$(dirname "$0")
+REPO_ROOT_DIR=$(git rev-parse --show-toplevel)
+CERTS_DIR=$REPO_ROOT_DIR/certs
+
+mkdir -p $CERTS_DIR
+
+if [ ! -f $SCRIPT_DIR/root-tls.json.tpl ] || [ ! -f $SCRIPT_DIR/intermediate-tls.json.tpl ]; then
+    >&2 echo "Les gabarits root-tls.json.tpl et intermediate-tls.json.tpl sont requis."
+    exit 1
+fi
+
+# assurer la présence des paramètres
+
+# Champ Organisation des certificats; sera aussi utilisé pour nommer les autorités
+# «$ORGANISATION Root Private Authority» et «$ORGANISATION Intermediary Private Authority»
+: ${ORGANISATION:?Variable ORGANISATION manquante}
+
+# Code de pays de 2 lettres: champ C du Subject des certificats
+: ${COUNTRY:?Variable COUNTRY manquante, code de pays de 2 lettres}
+
+# Champ ST (State/Province) du Subject des certificats
+: ${PROVINCE:?Variable PROVINCE manquante, nom complet}
+
+export ROOT_CA_NAME="$ORGANISATION Root Private Certificate Authority"
+export INTERMEDIARY_CA_NAME="$ORGANISATION Intermediary Private Certificate Authority"
+
+# Générer les gabarits de certificats
+>&2 echo "Génération des gabarits de certificats..."
+cat $SCRIPT_DIR/root-tls.json.tpl | envsubst | tee $CERTS_DIR/root-tls.json
+cat $SCRIPT_DIR/intermediate-tls.json.tpl | envsubst | tee $CERTS_DIR/intermediate-tls.json
+
+# Générer les mots de passe des certificats
+>&2 echo "Génération des mots de passe de certificats..."
+ROOT_TLS_PASSWORD_B64=$(tr -dc 'A-Za-z0-9!"#$%&'\''()*+,-./:;<=>?@[\]^_\`{|}~' </dev/urandom |
+    head -c 64 |
+    tee $CERTS_DIR/root-tls.password |
+    base64 --wrap=0)
+INTERMEDIATE_TLS_PASSWORD_B64=$(tr -dc 'A-Za-z0-9!"#$%&'\''()*+,-./:;<=>?@[\]^_\`{|}~' </dev/urandom |
+    head -c 64 |
+    tee $CERTS_DIR/intermediate-tls.password |
+    base64 --wrap=0)
+
+# Générer la paire de certificat racine
+>&2 echo "Génération du certificat racine..."
+step certificate create \
+  "${ROOT_CA_NAME}" \
+  "$CERTS_DIR/root-tls.crt" \
+  "$CERTS_DIR/root-tls.key" \
+  --template="$CERTS_DIR/root-tls.json" \
+  --kty="EC" \
+  --curve="P-256" \
+  --password-file="$CERTS_DIR/root-tls.password" \
+  --not-before="0s" \
+  --not-after="175320h" \
+  --force
+
+TLS_ROOT_CRT=$(cat $CERTS_DIR/root-tls.crt | sed 's/^/        /')
+TLS_ROOT_KEY=$(cat $CERTS_DIR/root-tls.key | sed 's/^/        /')
+TLS_ROOT_FINGERPRINT=$(step certificate fingerprint $CERTS_DIR/root-tls.crt)
+
+# Générer la paire de certificat intermédiaire
+>&2 echo "Génération du certificat intermédiaire..."
+step certificate create \
+  "${INTERMEDIATE_CA_NAME}" \
+  "$CERTS_DIR/intermediate-tls.crt" \
+  "$CERTS_DIR/intermediate-tls.key" \
+  --template="$CERTS_DIR/intermediate-tls.json" \
+  --kty="EC" \
+  --curve="P-256" \
+  --password-file="$CERTS_DIR/intermediate-tls.password" \
+  --not-before="0s" \
+  --not-after="175320h" \
+  --ca="$CERTS_DIR/root-tls.crt" \
+  --ca-key="$CERTS_DIR/root-tls.key" \
+  --ca-password-file=$CERTS_DIR/"root-tls.password" \
+  --force
+
+TLS_INTERMEDIATE_CRT=$(cat $CERTS_DIR/intermediate-tls.crt | sed 's/^/        /')
+TLS_INTERMEDIATE_KEY=$(cat $CERTS_DIR/intermediate-tls.key | sed 's/^/        /')
+
+# Définir un nom de provisioner s'il n'a pas été fourni
+[ -z $PROVISIONER_NAME ] && export PROVISIONER_NAME=admin
+
+# Générer un mot de passe pour le provisionneur JWK
+>&2 echo "Génération du mot de passe du provisionneur JWK..."
+JWK_PROVISIONER_PASSWORD_B64=$(tr -dc 'A-Za-z0-9!"#$%&'\''()*+,-./:;<=>?@[\]^_\`{|}~' </dev/urandom |
+    head -c 64 |
+    tee $CERTS_DIR/jwk_provisioner.password |
+    base64 --wrap=0)
+
+# Générer un provisionneur JWK
+>&2 echo "Génération du provisionneur JWK..."
+step crypto jwk create \
+  $CERTS_DIR/jwk_provisioner.pub \
+  $CERTS_DIR/jwk_provisioner.key \
+  --kty=EC \
+  --curve=P-256 \
+  --use=sig \
+  --password-file=$CERTS_DIR/jwk_provisioner.password \
+  --force
