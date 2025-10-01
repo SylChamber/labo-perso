@@ -12,7 +12,84 @@ Toutefois, les certificats étant omniprésents dans les communications sur un r
 
 Bien qu'on puisse créer manuellement des autorités de certificat à l'aide de la CLI `openssl`, l'opération est plus simple à l'aide de la CLI `step`.
 
-> Voir le dossier `examples/certificate_authority_single_instance` du chart Helm [step-certificates](https://artifacthub.io/packages/helm/smallstep/step-certificates) sur ArtifactHUB pour un exemple de création d'autorités racine et intermédiaire.
+> Voir le dossier `examples/certificate_authority_single_instance` du chart Helm [step-certificates](https://artifacthub.io/packages/helm/smallstep/step-certificates) sur ArtifactHUB pour un exemple de création d'autorités racine et intermédiaire. À noter qu'il y a une erreur de nommage des champs dans les gabarits `root-tls.json.tpl` et `intermediate-tls.json.tpl`. Se référer à la [documentation de la bibliothèque x509util](https://pkg.go.dev/go.step.sm/crypto/x509util#Name) pour les bons noms.
+
+On utilise la commande `step certificate create` pour créer une autorité de certificat, en spécifiant un gabarit en JSON pour les champs à compléter:
+
+```json
+# root-tls.json.tpl
+{
+  "subject": {
+    "commonName": "${ROOT_CA_NAME}",
+    "organization": "${ORGANISATION}",
+    "country": "${COUNTRY}",
+    "province": "${PROVINCE}"
+  },
+  "keyUsage": [ "certSign", "crlSign" ],
+  "basicConstraints": {
+    "isCA": true,
+    "maxPathLen": 1
+  }
+}
+
+# intermediate-tls.json.tpl
+{
+  "subject": {
+    "commonName": "${INTERMEDIATE_CA_NAME}",
+    "organization": "${ORGANISATION}",
+    "country": "${COUNTRY}",
+    "province": "${PROVINCE}"
+  },
+  "keyUsage": [ "certSign", "crlSign" ],
+  "basicConstraints": {
+    "isCA": true,
+    "maxPathLen": 1
+  }
+}
+```
+
+Ces gabarits réfèrent à des variables d'environnement. On définit les variables (par exemple, `export ORGANISATION=SylChamber`) puis on utilise `envsubst` pour générer les fichiers JSON à fournir à `step`:
+
+```shell
+cat root-tls.json.tpl | envsubst | tee root-tls.json
+cat intermediate-tls.json.tpl | envsubst | tee intermediate-tls.json
+```
+
+On peut ensuite faire générer les autorités de certificat par `step`:
+
+```shell
+# 25 ans
+NOT_AFTER=219144h
+# autorité racine; définir un mot de passe dans 'root-tls.password'
+step certificate create \
+  "${ORGANISATION} Root Private Authority" \
+  "root-tls.crt" \
+  "root-tls.key" \
+  --template="root-tls.json" \
+  --kty="EC" \
+  --curve="P-256" \
+  --password-file="root-tls.password" \
+  --not-before="0s" \
+  --not-after="$NOT_AFTER" \
+  --force
+# autorité intermédiaire; définir un mot de passe dans 'intermediate-tls.password'
+step certificate create \
+  "${ORGANISATION} Intermediate Private Authority" \
+  "intermediate-tls.crt" \
+  "intermediate-tls.key" \
+  --template="intermediate-tls.json" \
+  --kty="EC" \
+  --curve="P-256" \
+  --password-file="intermediate-tls.password" \
+  --not-before="0s" \
+  --not-after="$NOT_AFTER" \
+  --ca="root-tls.crt" \
+  --ca-key="root-tls.key" \
+  --ca-password-file="root-tls.password" \
+  --force
+```
+
+Voir le script sous [scripts/creer-ca.sh](../../scripts/creer-ca.sh) qui automatise ces opérations.
 
 ## Exécution en conteneur pour tests
 

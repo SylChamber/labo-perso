@@ -28,9 +28,9 @@ Le serveur a été [configuré avec openSUSE MicroOS](docs/microos/README.md), u
 
 ## Feuille de route
 
-Au plan du système:
+Voici la feuille de route au plan du _système_ ou de _k3s_. Les serveurs DNS et de certificats sont des dépendances du cluster Kubernetes. Ils devraient être à tout le moins réalisés rapidement.
 
-* ajouts aux paquets
+* [système] ajouts aux paquets
   * **(fait)** retrait des man pages
     * j'ai tenté d'installé les man pages mais ça n'a pas fonctionné, car MicroOS est configuré pour ne pas les inclure: `rpm.install.excludedocs = yes` est spécifié dans `/etc/zypp/zypp.conf`
     * c'est l'utilisation d'une `distrobox` qui est recommandée par le responsable de MicroOS
@@ -42,61 +42,60 @@ Au plan du système:
   * **(fait)** ajout de [podlet](https://github.com/containers/podlet), qui génère des fichiers Quadlet
     * en attendant la version récente de podman qui inclut la fonctionnalité
   * **(fait)** `tree`, `jq`, `yq`, `setools-console` (pour `seinfo`)
-* **(bloqué)** chiffrement intégral (Full Disk Encryption)
+  * ajout de `wipe`
+* **(bloqué)** [système] chiffrement intégral (Full Disk Encryption)
   * mes tentatives ont été infructueuses, tant avec Leap Micro (erreurs `btrfs` constantes) qu'avec MicroOS (déverrouillage via TPM non fonctionnel)
   * plusieurs tentatives faites avec MicroOS; systemd-crypt ne trouve pas l'appareil TPM2
   * mon serveur ne supporte pas la méthode de stockage par défaut
   * comme je veux les mises à jour automatiques de l'OS, je garde non chiffré pour l'instant
-* **(fait)** serveur DNS
+* **(fait)** [système] serveur DNS
   * vise à faciliter la mise en place d'un réseau local avec des noms de domaine
   * **(fait)** déploiement de CoreDNS sous forme de service systemd avec Podman Quadlet (évolution des [travaux précédents](docs/dns/README.md))
   * non requis?
     * ajout du service coredns comme serveur DNS dans openSUSE MicroOS: l'ajout du DNS au routeur devrait être suffisant pour que le serveur interroge son service coredns pour la résolution sur le réseau local
-* **(fait)** gestion de la configuration des services podman selon les principes GitOps
+* **(fait)** [système] gestion de la configuration des services podman selon les principes GitOps
   * l'objectif est d'automatiser les services prérequis au cluster k3s:
     * CoreDNS
     * ACME
   * installer [FetchIt](https://fetchit.readthedocs.io) et ajouter à la configuration système
-* **(fait)** redéploiement du serveur DNS par GitOps
-* activation du [DNS over TLS](https://en.m.wikipedia.org/wiki/DNS_over_TLS) dans CoreDNS
-  * les appareils Android utilisent le mode «DNS privé» par défaut; pour qu'ils utilisent le DNS du réseau local, il faut [activer le support DNS over TLS dans CoreDNS](https://bartonbytes.com/posts/how-to-configure-coredns-for-dns-over-tls/) avec le [plugin tls](https://coredns.io/plugins/tls/)
-* sauvegardes
-  * sauvegardes automatiques locales sur mes ordinateurs à l'aide de `syncthing` (déjà utilisé sur mes appareils)
-  * sauvegarde automatique dans l'infonuagique des données chiffrées avec rclone (voir des fournisseurs potentiels listés sous [k3s - Sauvegardes](docs/k3s/README.md#sauvegardes))
-
-Les serveurs DNS et de certificats sont des dépendances du cluster Kubernetes. Ils devraient être à tout le moins réalisés rapidement.
-
-Au plan du cluster `k3s`:
-
-* serveur de certificats ACME
+* **(fait)** [système] redéploiement du serveur DNS par GitOps
+* **(en cours)** [système] création d'autorités privées de certificat racine et intermédiaire
+  * puisque les certificats sont un élément central, utiliser la CLI `step` pour créer les autorités de certificat
+* [k3s] serveur de certificats ACME
   * vise à faciliter la gestion des certificats TLS, et sert la même fonction que Let's Encrypt sur un réseau privé
   * déploiement de `step-ca` sous forme de conteneur (voir notes dans [k3s - Gestion des certificats](docs/k3s/README.md#gestion-des-certificats))
   * à déployer dans k3s pour bénéficier d'un domaine spécifique à `step-ca` avec SNI, et d'éviter la nécessité de déployer d'un proxy dans le système alors que k3s en dispose d'un
-* gestion des certificats avec `cert-manager`
+  * configurer avec les autorités créées à l'étape précédente
+* [système] activation du [DNS over TLS](https://en.m.wikipedia.org/wiki/DNS_over_TLS) dans CoreDNS
+  * les appareils Android utilisent le mode «DNS privé» par défaut; pour qu'ils utilisent le DNS du réseau local, il faut [activer le support DNS over TLS dans CoreDNS](https://bartonbytes.com/posts/how-to-configure-coredns-for-dns-over-tls/) avec le [plugin tls](https://coredns.io/plugins/tls/)
+* [système] sauvegardes
+  * **(fait)** sauvegardes automatiques locales sur mes ordinateurs à l'aide de `syncthing` (déjà utilisé sur mes appareils)
+  * sauvegarde automatique dans l'infonuagique des données chiffrées avec rclone (voir des fournisseurs potentiels listés sous [k3s - Sauvegardes](docs/k3s/README.md#sauvegardes))
+* [k3s] gestion des certificats avec `cert-manager`
   * déploiement avec un Helm Chart par le biais du Helm Controller de `k3s`
   * utilisation de `step-ca` pour provisionner les certificats
-* déploiement en continu GitOps, avec Argo CD
+* [k3s] déploiement en continu GitOps, avec Argo CD
   * déploiement d'Argo CD avec un Helm Chart par le biais du Helm Controller
-* évaluer le routage avec Gateway API plutôt qu'Ingress
+* [k3s] évaluer le routage avec Gateway API plutôt qu'Ingress
   * pour l'activer dans Traefik: [Clarification on Traefik Ingress in k3s - Gateway API vs. Ingress Resource - k3s-io/k3s](https://github.com/k3s-io/k3s/discussions/11100)
   * pour l'utilisation dans Traefik: [Traefik & Kubernetes with Gateway API - Traefik Documentation](https://doc.traefik.io/traefik/v3.5/reference/routing-configuration/kubernetes/gateway-api/)
-* sécurité améliorée des pods avec le profil `Restricted` de Pod Security Standards
-* gestion sécuritaire du redémarrage Kubernetes avec [Kured](https://kured.dev/)
+* [k3s] sécurité améliorée des pods avec le profil `Restricted` de Pod Security Standards
+* [k3s] gestion sécuritaire du redémarrage Kubernetes avec [Kured](https://kured.dev/)
   * déterminer si c'est requis
-* mises à niveau automatisées de `k3s`
+* [k3s] mises à niveau automatisées de `k3s`
   * déploiement du System Upgrade Controller Rancher par GitOps
-* outillage d'observabilité
+* [k3s] outillage d'observabilité
   * évaluer Pixie, conçu pour les déploiements _edge_ (voir les notes dans [k3s - Observabilité](docs/k3s/README.md#observabilité))
-* Nextcloud, plateforme autohébergée de stockage et de partage
-* Tunnel d'exposition de services sur Internet
+* [k3s] Nextcloud, plateforme autohébergée de stockage et de partage
+* [k3s] Tunnel d'exposition de services sur Internet
   * explorer les options, par exemple CloudFlare Tunnels
     * [Using Cloudflare Tunnels to Access Homelab Services Out of Local Network - It's FOSS](https://itsfoss.com/cloudflare-tunnels/)
     * [Configuration des tunnels Cloudflare : Rationaliser et sécuriser votre trafic réseau](https://fr.simeononsecurity.com/guides/how-to-setup-and-use-cloudflare-tunnels/)
     * [Une nouvelle percée : des tunnels gratuits pour tous - CloudFlare](https://blog.cloudflare.com/fr-fr/tunnel-for-everyone/)
-* Serveur git autohébergé
+* [k3s] Serveur git autohébergé
   * serveur [Forgejo](https://forgejo.org/) pour s'affranchir des fournisseurs propriétaires
   * automatiser des miroirs sur Github ou GitLab
-* Albums photos en ligne
+* [k3s] Albums photos en ligne
   * évaluer les capacités de NextCloud
   * envisager Immich ou un autre produit libre
 
