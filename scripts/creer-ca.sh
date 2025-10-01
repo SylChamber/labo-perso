@@ -11,6 +11,8 @@ fi
 SCRIPT_DIR=$(dirname "$0")
 REPO_ROOT_DIR=$(git rev-parse --show-toplevel)
 CERTS_DIR=$REPO_ROOT_DIR/certs
+# 25 ans
+NOT_AFTER=219144h
 
 mkdir -p $CERTS_DIR
 
@@ -32,21 +34,35 @@ fi
 : ${PROVINCE:?Variable PROVINCE manquante, nom complet}
 
 export ROOT_CA_NAME="$ORGANISATION Root Private Certificate Authority"
-export INTERMEDIARY_CA_NAME="$ORGANISATION Intermediary Private Certificate Authority"
+export INTERMEDIATE_CA_NAME="$ORGANISATION Intermediary Private Certificate Authority"
 
 # Générer les gabarits de certificats
 >&2 echo "Génération des gabarits de certificats..."
 cat $SCRIPT_DIR/root-tls.json.tpl | envsubst | tee $CERTS_DIR/root-tls.json
 cat $SCRIPT_DIR/intermediate-tls.json.tpl | envsubst | tee $CERTS_DIR/intermediate-tls.json
 
-# Générer les mots de passe des certificats
->&2 echo "Génération des mots de passe de certificats..."
-ROOT_TLS_PASSWORD_B64=$(tr -dc 'A-Za-z0-9!"#$%&'\''()*+,-./:;<=>?@[\]^_\`{|}~' </dev/urandom |
-    head -c 64 |
+# Demander les mots de passe des certificats
+read -sp "Veuillez saisir un mot de passe pour le certificat root: " ROOT_TLS_PASSWORD
+>&2 echo
+
+if [ -z "$ROOT_TLS_PASSWORD" ]; then
+    >&2 echo "Aucun mot de passe saisi, génération d'un mot de passe..."
+    ROOT_TLS_PASSWORD=$(openssl rand -base64 42)
+fi
+
+ROOT_TLS_PASSWORD_B64=$(echo $ROOT_TLS_PASSWORD |
     tee $CERTS_DIR/root-tls.password |
     base64 --wrap=0)
-INTERMEDIATE_TLS_PASSWORD_B64=$(tr -dc 'A-Za-z0-9!"#$%&'\''()*+,-./:;<=>?@[\]^_\`{|}~' </dev/urandom |
-    head -c 64 |
+
+read -sp "Veuillez saisir un mot de passe pour le certificat intermédiaire: " INTERMEDIATE_TLS_PASSWORD
+>&2 echo
+
+if [ -z "$INTERMEDIATE_TLS_PASSWORD" ]; then
+    >&2 echo "Aucun mot de passe saisi, génération d'un mot de passe..."
+    INTERMEDIATE_TLS_PASSWORD=$(openssl rand -base64 42)
+fi
+
+INTERMEDIATE_TLS_PASSWORD_B64=$(echo $INTERMEDIATE_TLS_PASSWORD |
     tee $CERTS_DIR/intermediate-tls.password |
     base64 --wrap=0)
 
@@ -61,7 +77,7 @@ step certificate create \
   --curve="P-256" \
   --password-file="$CERTS_DIR/root-tls.password" \
   --not-before="0s" \
-  --not-after="175320h" \
+  --not-after="$NOT_AFTER" \
   --force
 
 TLS_ROOT_CRT=$(cat $CERTS_DIR/root-tls.crt | sed 's/^/        /')
@@ -79,7 +95,7 @@ step certificate create \
   --curve="P-256" \
   --password-file="$CERTS_DIR/intermediate-tls.password" \
   --not-before="0s" \
-  --not-after="175320h" \
+  --not-after="$NOT_AFTER" \
   --ca="$CERTS_DIR/root-tls.crt" \
   --ca-key="$CERTS_DIR/root-tls.key" \
   --ca-password-file=$CERTS_DIR/"root-tls.password" \
@@ -93,8 +109,7 @@ TLS_INTERMEDIATE_KEY=$(cat $CERTS_DIR/intermediate-tls.key | sed 's/^/        /'
 
 # Générer un mot de passe pour le provisionneur JWK
 >&2 echo "Génération du mot de passe du provisionneur JWK..."
-JWK_PROVISIONER_PASSWORD_B64=$(tr -dc 'A-Za-z0-9!"#$%&'\''()*+,-./:;<=>?@[\]^_\`{|}~' </dev/urandom |
-    head -c 64 |
+JWK_PROVISIONER_PASSWORD_B64=$(openssl rand -base64 42 |
     tee $CERTS_DIR/jwk_provisioner.password |
     base64 --wrap=0)
 
