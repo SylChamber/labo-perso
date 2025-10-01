@@ -123,3 +123,6 @@ step crypto jwk create \
   --use=sig \
   --password-file=$CERTS_DIR/jwk_provisioner.password \
   --force
+
+>&2 echo "Les fichiers de certificats ont été créés dans le dossier certs.
+Veuillez les sauvegarder de façon sécuritaire puis les supprimer."

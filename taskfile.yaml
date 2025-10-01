@@ -13,3 +13,14 @@ tasks:
     cmds:
       - task -l
     silent: true
+
+  certs:create:
+    desc: Crée les autorités de certificats.
+    dotenv: ['.env', '{{.ENV}}/.venv']
+    cmds:
+      - scripts/creer-ca.sh
+  certs:cleanup:
+    desc: Supprime les fichiers de certificats générés.
+    prompt: Attention! Avez-vous sauvegardé les fichiers de certificats avant de les supprimer?
+    cmds:
+      - wipe {{.ROOT_DIR}}/certs/*
