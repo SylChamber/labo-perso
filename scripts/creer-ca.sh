@@ -107,9 +107,16 @@ TLS_INTERMEDIATE_KEY=$(cat $CERTS_DIR/intermediate-tls.key | sed 's/^/        /'
 # Définir un nom de provisioner s'il n'a pas été fourni
 [ -z $PROVISIONER_NAME ] && export PROVISIONER_NAME=admin
 
-# Générer un mot de passe pour le provisionneur JWK
->&2 echo "Génération du mot de passe du provisionneur JWK..."
-JWK_PROVISIONER_PASSWORD_B64=$(openssl rand -base64 42 |
+# Demander un mot de passe pour le provisionneur JWK
+read -sp "Veuillez saisir un mot de passe pour le provisionneur de certificats JWK: " JWK_PROVISIONER_PASSWORD
+>&2 echo
+
+if [ -z "$JWK_PROVISIONER_PASSWORD" ]; then
+    >&2 echo "Aucun mot de passe saisi, génération d'un mot de passe..."
+    JWK_PROVISIONER_PASSWORD=$(openssl rand -base64 42)
+fi
+
+JWK_PROVISIONER_PASSWORD_B64=$(echo $JWK_PROVISIONER_PASSWORD |
     tee $CERTS_DIR/jwk_provisioner.password |
     base64 --wrap=0)
 
@@ -125,4 +132,5 @@ step crypto jwk create \
   --force
 
 >&2 echo "Les fichiers de certificats ont été créés dans le dossier certs.
-Veuillez les sauvegarder de façon sécuritaire puis les supprimer."
+Avant de les supprimer, veuillez les sauvegarder de façon sécuritaire
+et générez le fichier manifeste de secrets pour step-ca."
