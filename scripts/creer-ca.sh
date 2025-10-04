@@ -4,7 +4,7 @@
 set -eo pipefail
 
 if ! command -v step >/dev/null 2>&1 ; then
-    echo "step est requis pour créer des autorités de certificat."
+    >&2 echo "step est requis pour créer des autorités de certificat."
     exit 1
 fi
 
@@ -50,9 +50,7 @@ if [ -z "$ROOT_TLS_PASSWORD" ]; then
     ROOT_TLS_PASSWORD=$(openssl rand -base64 42)
 fi
 
-ROOT_TLS_PASSWORD_B64=$(echo $ROOT_TLS_PASSWORD |
-    tee $CERTS_DIR/root-tls.password |
-    base64 --wrap=0)
+echo $ROOT_TLS_PASSWORD > $CERTS_DIR/root-tls.password
 
 read -sp "Veuillez saisir un mot de passe pour le certificat intermédiaire: " INTERMEDIATE_TLS_PASSWORD
 >&2 echo
@@ -62,9 +60,7 @@ if [ -z "$INTERMEDIATE_TLS_PASSWORD" ]; then
     INTERMEDIATE_TLS_PASSWORD=$(openssl rand -base64 42)
 fi
 
-INTERMEDIATE_TLS_PASSWORD_B64=$(echo $INTERMEDIATE_TLS_PASSWORD |
-    tee $CERTS_DIR/intermediate-tls.password |
-    base64 --wrap=0)
+echo $INTERMEDIATE_TLS_PASSWORD > $CERTS_DIR/intermediate-tls.password
 
 # Générer la paire de certificat racine
 >&2 echo "Génération du certificat racine..."
@@ -116,9 +112,7 @@ if [ -z "$JWK_PROVISIONER_PASSWORD" ]; then
     JWK_PROVISIONER_PASSWORD=$(openssl rand -base64 42)
 fi
 
-JWK_PROVISIONER_PASSWORD_B64=$(echo $JWK_PROVISIONER_PASSWORD |
-    tee $CERTS_DIR/jwk_provisioner.password |
-    base64 --wrap=0)
+echo $JWK_PROVISIONER_PASSWORD > $CERTS_DIR/jwk_provisioner.password
 
 # Générer un provisionneur JWK
 >&2 echo "Génération du provisionneur JWK..."
