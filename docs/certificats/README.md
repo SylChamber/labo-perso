@@ -102,6 +102,14 @@ sudo update-ca-certificates
 
 Le certificat sera ensuite ajouté sous `/etc/ssl/certs/` (avec une extension `.pem`).
 
+## Configuration du certificat de Cockpit
+
+On peut personnaliser le certificat TLS qui sera utilisé par Cockpit.
+
+Références:
+
+* [SSL/TLS Usage - Cockpit](https://cockpit-project.org/guide/latest/https)
+
 ## Exécution en conteneur pour tests
 
 Afin de tester le fonctionnement et de l'explorer, on peut lancer `step-ca` comme conteneur:
@@ -195,7 +203,7 @@ helm repo update
 ensuite installer `step-ca` dans Kubernetes:
 
 ```shell
-
+# TODO
 ```
 
 ## Références
@@ -209,3 +217,6 @@ ensuite installer `step-ca` dans Kubernetes:
   * [step-ca Getting Started](https://smallstep.com/docs/step-ca/getting-started/)
 * [step-certificates - ArtifactHUB](https://artifacthub.io/packages/helm/smallstep/step-certificates)
 * [step-ca Docker Image - Docker Hub](https://hub.docker.com/r/smallstep/step-ca)
+* [x509util - Name Object - Go Library](https://pkg.go.dev/go.step.sm/crypto/x509util#Name)
+* [SSL/TLS Usage - Cockpit](https://cockpit-project.org/guide/latest/https)
+* [ArgoCD and cert-manager TLS/SSL certificates Integration: In-depth guide](https://soappanda.medium.com/argocd-and-cert-manager-tls-ssl-certificates-integration-in-depth-guide-03199da8257a)
