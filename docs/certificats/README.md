@@ -91,6 +91,17 @@ step certificate create \
 
 Voir le script sous [scripts/creer-ca.sh](../../scripts/creer-ca.sh) qui automatise ces opérations.
 
+## Installation du certificat racine dans openSUSE MicroOS
+
+Pour installer le certificat racine dans MicroOS, il faut le copier sous `/etc/pki/trust/anchors`, puis lancer `sudo update-ca-certificates`.
+
+```shell
+sudo cp SylChamber_Root_Private_Certificate_Authority.crt /etc/pki/trust/anchors/
+sudo update-ca-certificates
+```
+
+Le certificat sera ensuite ajouté sous `/etc/ssl/certs/` (avec une extension `.pem`).
+
 ## Exécution en conteneur pour tests
 
 Afin de tester le fonctionnement et de l'explorer, on peut lancer `step-ca` comme conteneur:
