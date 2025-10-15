@@ -91,6 +91,28 @@ step certificate create \
 
 Voir le script sous [scripts/creer-ca.sh](../../scripts/creer-ca.sh) qui automatise ces opérations.
 
+## Création d'un certificat TLS à l'aide de la cli step
+
+Puisque `step-ca` sera déployé dans Kubernetes, il sera utile de pouvoir créer un certificat _leaf_ pour une application hébergée hors Kubernetes, par exemple Cockpit. La cli `step` permet de faire certaines opérations sans nécessiter le déploiement de `step-ca`.
+
+> Tout certificat sera créé avec la signature du certificat intermédiaire. Les certificats seront stockés sous
+> `~/.local/state/step/certs`.
+
+Pour créer un certificat _leaf_ pour le serveur, utiliser le certificat intermédiaire comme autorité de certificat; le mot de passe de l'autorité sera demandé:
+
+> On ne chiffre pas la clé afin que Cockpit puisse s'en servir.
+
+```shell
+step certificate create "Serveur Motel" motel.crt motel.key \
+  --ca ~/.local/state/step/certs/intermediate_ca.crt \
+  --ca-key ~/.local/state/step/certs/intermediate_ca.key \
+  --not-after=8760h \
+  --bundle \
+  -san motel.internal --san serveur.internal --san server.internal \
+  --template ~/.local/state/step/certs/certificate.json \
+  --insecure --no-password
+```
+
 ## Installation du certificat racine dans openSUSE MicroOS
 
 Pour installer le certificat racine dans MicroOS, il faut le copier sous `/etc/pki/trust/anchors`, puis lancer `sudo update-ca-certificates`.
@@ -126,7 +148,10 @@ Références:
 
 ## Configuration du certificat de Cockpit
 
-On peut personnaliser le certificat TLS qui sera utilisé par Cockpit.
+On peut personnaliser le certificat TLS qui sera utilisé par Cockpit. On doit fournir:
+
+* le certificat et l'autorité intermédiaire de certificat dans le même fichier `.crt` en format `PEM`;
+* la clé non chiffrée dans un fichier `.key` du même nom.
 
 Références:
 
@@ -240,5 +265,7 @@ ensuite installer `step-ca` dans Kubernetes:
 * [step-certificates - ArtifactHUB](https://artifacthub.io/packages/helm/smallstep/step-certificates)
 * [step-ca Docker Image - Docker Hub](https://hub.docker.com/r/smallstep/step-ca)
 * [x509util - Name Object - Go Library](https://pkg.go.dev/go.step.sm/crypto/x509util#Name)
+* [step - Documentation](https://smallstep.com/docs/step-cli/)
+  * [Create and work with X.509 certificates](https://smallstep.com/docs/step-cli/basic-crypto-operations/#create-and-work-with-x509-certificates)
 * [SSL/TLS Usage - Cockpit](https://cockpit-project.org/guide/latest/https)
 * [ArgoCD and cert-manager TLS/SSL certificates Integration: In-depth guide](https://soappanda.medium.com/argocd-and-cert-manager-tls-ssl-certificates-integration-in-depth-guide-03199da8257a)
