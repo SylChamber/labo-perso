@@ -33,6 +33,8 @@ Références
 
 Sous openSUSE MicroOS, on doit activer une règle parefeu `firewalld` pour permettre l'entrée sur 53 en TCP en UDP. `cockpit-firewalld` doit être installé, et on peut gérer les règles sous **Réseau > Pare-feu** dans Cockpit. Activer le service `dns` pour débloquer le port TCP 53 et UDP 53.
 
+> Activer également le service `dns-over-tls` pour débloquer le port 853 du DNS-over-TLS.
+
 Pour lancer manuellement CoreDNS avec la configuration par défaut (avec permissions pour exposer le port 53 sur TCP et UDP), pour tester:
 
 > Lancer `podman run coredns/coredns -h` pour obtenir les options de ligne de commande.
