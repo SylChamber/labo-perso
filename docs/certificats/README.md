@@ -102,6 +102,28 @@ sudo update-ca-certificates
 
 Le certificat sera ensuite ajouté sous `/etc/ssl/certs/` (avec une extension `.pem`).
 
+## Installation du certificat racine dans Firefox Linux
+
+Firefox n'utilise pas les certificats de l'OS: il inclut ses propres certificats **dans chaque profil utilisateur**. Les [instructions de Mozilla sur l'ajout d'une autorité de certificat](https://support.mozilla.org/en-US/kb/setting-certificate-authorities-firefox) sont loin d'être limpides. Des [instructions sur AskUbuntu indiquent comment ajouter une autorité de certificat](https://askubuntu.com/questions/244582/add-certificate-authorities-system-wide-on-firefox#answer-1535553). Il s'agit d'ajouter une politique qui ajoute un module permettant d'utiliser les certificats de l'OS.
+
+> Les paquets `p11-kit` et `p11-kit-modules` doivent être installés. Ils semblent l'être sous Ubuntu 25.04.
+
+Il faut créer ce fichier sous `/etc/firefox/policies/policies.json`, puis relancer Firefox:
+
+```json
+{
+  "policies": {
+    "SecurityDevices": {
+      "p11-kit-trust": "/usr/lib/x86_64-linux-gnu/pkcs11/p11-kit-trust.so"
+    }
+  }
+}
+```
+
+Références:
+
+* [Add certificate authorities system-wide on Firefox - AskUbuntu](https://askubuntu.com/questions/244582/add-certificate-authorities-system-wide-on-firefox#answer-1535553)
+
 ## Configuration du certificat de Cockpit
 
 On peut personnaliser le certificat TLS qui sera utilisé par Cockpit.
