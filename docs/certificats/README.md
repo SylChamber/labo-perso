@@ -157,7 +157,45 @@ Références:
 
 * [SSL/TLS Usage - Cockpit](https://cockpit-project.org/guide/latest/https)
 
-## Exécution en conteneur pour tests
+## Exécution d'une requête DNS-over-TLS
+
+Pour exécuter avec `dig` une requête DoT avec un serveur DNS qui le supporte, on doit spécifier les options `+tls`, `tls-ca` et spécifier le `+tls-host`:
+
+> L'option `+tls` semble optionnelle lorsqu'on précise `+tls-host` et `+tls-ca`. Le port `853` doit être débloqué sur le parefeu.
+
+```shell
+❯ dig +tls +tls-host=dns.google +tls-ca @8.8.8.8 qwant.com
+
+; <<>> DiG 9.20.11-0ubuntu0.1-Ubuntu <<>> +tls +tls-host=dns.google +tls-ca @8.8.8.8 qwant.com
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 53151
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 3, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 512
+;; QUESTION SECTION:
+;qwant.com.                     IN      A
+
+;; ANSWER SECTION:
+qwant.com.              3600    IN      A       141.95.150.143
+qwant.com.              3600    IN      A       54.38.0.163
+qwant.com.              3600    IN      A       141.94.211.182
+
+;; Query time: 44 msec
+;; SERVER: 8.8.8.8#853(8.8.8.8) (TLS)
+;; WHEN: Wed Oct 15 19:46:57 EDT 2025
+;; MSG SIZE  rcvd: 86
+```
+
+ou encore, avec le serveur DNS public de CloudFlare:
+
+```shell
+dig +tls +tls-ca +tls-host=one.one.one.one @1.1.1.1 qwant.com
+```
+
+## Exécution de step-ca en conteneur pour tests
 
 Afin de tester le fonctionnement et de l'explorer, on peut lancer `step-ca` comme conteneur:
 
