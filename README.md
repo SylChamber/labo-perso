@@ -59,8 +59,9 @@ Voici la feuille de route au plan du _système_ ou de _k3s_. Les serveurs DNS et
     * ACME
   * installer [FetchIt](https://fetchit.readthedocs.io) et ajouter à la configuration système
 * **(fait)** [système] redéploiement du serveur DNS par GitOps
-* **(en cours)** [système] création d'autorités privées de certificat racine et intermédiaire
+* **(fait)** [système] création d'autorités privées de certificat racine et intermédiaire
   * puisque les certificats sont un élément central, utiliser la CLI `step` pour créer les autorités de certificat
+* **(fait)** [système] création d'un certificat pour le serveur (Cockpit)
 * [k3s] serveur de certificats ACME
   * vise à faciliter la gestion des certificats TLS, et sert la même fonction que Let's Encrypt sur un réseau privé
   * déploiement de `step-ca` sous forme de conteneur (voir notes dans [k3s - Gestion des certificats](docs/k3s/README.md#gestion-des-certificats))
