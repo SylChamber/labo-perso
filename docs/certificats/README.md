@@ -307,3 +307,6 @@ ensuite installer `step-ca` dans Kubernetes:
   * [Create and work with X.509 certificates](https://smallstep.com/docs/step-cli/basic-crypto-operations/#create-and-work-with-x509-certificates)
 * [SSL/TLS Usage - Cockpit](https://cockpit-project.org/guide/latest/https)
 * [ArgoCD and cert-manager TLS/SSL certificates Integration: In-depth guide](https://soappanda.medium.com/argocd-and-cert-manager-tls-ssl-certificates-integration-in-depth-guide-03199da8257a)
+* [DNS over TLS - CloudFlare Docs](https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-tls/)
+* [DNS over TLS vs. DNS over HTTPS | Secure DNS - CloudFlare](https://www.cloudflare.com/learning/dns/dns-over-tls/)
+* [What is 1.1.1.1? - CloudFlare](https://www.cloudflare.com/learning/dns/what-is-1.1.1.1/)
