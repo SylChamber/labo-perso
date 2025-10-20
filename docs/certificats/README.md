@@ -150,8 +150,17 @@ Références:
 
 On peut personnaliser le certificat TLS qui sera utilisé par Cockpit. On doit fournir:
 
-* le certificat et l'autorité intermédiaire de certificat dans le même fichier `.crt` en format `PEM`;
+> L'inclusion de l'autorité intermédiaire uniquement est suffisante pour les navigateurs basés sur Chromium, mais ne semble pas être suffisant pour Firefox. L'autorité racine doit également être incluse. Il faut, de surcroît, [configurer Firefox afin qu'il utilise les certificats de l'OS](#installation-du-certificat-racine-dans-firefox-linux).
+
+* le certificat et l'autorité intermédiaire de certificat dans le même fichier `.crt` ou `.cert` en format `PEM`;
 * la clé non chiffrée dans un fichier `.key` du même nom.
+
+Les deux fichiers doivent être copiés sous `/etc/cockpit/ws-certs.d/`. Vérifier ensuite que Cockpit utilisera le nouveau certificat:
+
+```shell
+> sudo /usr/libexec/cockpit-certificate-ensure --check
+Would use certificate /etc/cockpit/ws-certs.d/motel.cert
+```
 
 Références:
 
