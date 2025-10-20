@@ -14,16 +14,21 @@ tasks:
       - task -l
     silent: true
 
-  certs:create:ca:
+  certs:ca:
     desc: Crée les autorités de certificats.
     dotenv: ['.env', '{{.ENV}}/.venv']
     cmds:
       - scripts/creer-ca.sh
-  certs:create:manifests:
+  certs:manifests:
     desc: Crée les manifestes Kubernetes des secrets de la gestion des certificats.
     dotenv: ['.env', '{{.ENV}}/.venv']
     cmds:
       - scripts/creer-manifeste-secrets-ca.sh
+  certs:serveur:
+    desc: Crée un certificat 'leaf' pour le serveur
+    dotenv: ['.env', '{{.ENV}}/.venv']
+    cmds:
+      - scripts/ceer-certificat-serveur.sh
   certs:cleanup:
     desc: Supprime les fichiers de certificats générés.
     prompt: Attention! Avez-vous sauvegardé les fichiers de certificats avant de les supprimer?
