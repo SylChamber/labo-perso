@@ -124,6 +124,17 @@ sudo update-ca-certificates
 
 Le certificat sera ensuite ajouté sous `/etc/ssl/certs/` (avec une extension `.pem`).
 
+Valider le statut de confiance de l'autorité en vérifiant la présence d'une valeur _anchor_ dans la clé `trust`:
+
+```shell
+> trust list --filter=ca-anchors | grep SylChamber -i -A 2 -B 3
+pkcs11:id=%BF%E1%03%98%0C%B7%A1%05%04%BD%2A%82%D0%80%FD%67%5F%DE%C9%93;type=cert
+    type: certificate
+    label: SylChamber Root Private Certificate Authority
+    trust: anchor
+    category: authority
+```
+
 ## Installation du certificat racine dans Firefox Linux
 
 Firefox n'utilise pas les certificats de l'OS: il inclut ses propres certificats **dans chaque profil utilisateur**. Les [instructions de Mozilla sur l'ajout d'une autorité de certificat](https://support.mozilla.org/en-US/kb/setting-certificate-authorities-firefox) sont loin d'être limpides. Des [instructions sur AskUbuntu indiquent comment ajouter une autorité de certificat](https://askubuntu.com/questions/244582/add-certificate-authorities-system-wide-on-firefox#answer-1535553). Il s'agit d'ajouter une politique qui ajoute un module permettant d'utiliser les certificats de l'OS.
@@ -319,3 +330,4 @@ ensuite installer `step-ca` dans Kubernetes:
 * [DNS over TLS - CloudFlare Docs](https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-tls/)
 * [DNS over TLS vs. DNS over HTTPS | Secure DNS - CloudFlare](https://www.cloudflare.com/learning/dns/dns-over-tls/)
 * [What is 1.1.1.1? - CloudFlare](https://www.cloudflare.com/learning/dns/what-is-1.1.1.1/)
+* [How to configure your CA trust list in Linux - Red Hat Blog](https://www.redhat.com/en/blog/configure-ca-trust-list)

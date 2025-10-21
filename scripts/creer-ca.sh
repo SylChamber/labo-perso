@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Crée des autorités privées de certificat racine et intermédiaire pour le réseau local
+# TODO - créer les autorités sous ~/.local/state/step/certs
 
 set -eo pipefail
 
