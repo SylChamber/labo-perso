@@ -166,9 +166,9 @@ Il est préférable de contrôler ses propres certificats, mais la gestion manue
   * [step-ca Installation](https://smallstep.com/docs/step-ca/installation/index.html)
 * [step-ca Docker Image - Docker Hub](https://hub.docker.com/r/smallstep/step-ca)
 
-Il est préférable de déployer `step-ca` en dehors de Kubernetes puisque c'est une dépendance du cluster. Il existe en image conteneur. Envisager de l'installer comme quadlet Podman dans openSUSE MicroOS.
+Il aurait été préférable de déployer `step-ca` en dehors de Kubernetes puisque c'est une dépendance du cluster. Il existe en image conteneur.
 
-> L'ennui avec cette approche, c'est la nécessité de déployer un proxy pour transférer les requêtes à un domaine sans port par SNI. Comme il y a déjà un proxy dans k3s, aussi bien déployer dans k3s. Le cluster n'a pas besoin d'utiliser l'autorité de certificat à l'installation.
+L'ennui avec cette approche, c'est la nécessité de déployer un proxy pour transférer les requêtes à un domaine sans port par SNI. Comme il y a déjà un proxy dans k3s, aussi bien déployer dans k3s. Le cluster n'a pas besoin d'utiliser l'autorité de certificat à l'installation. Il ne sera utile qu'au moment de déployer des applications qui seront exposées hors du cluster.
 
 ## Mises à niveau automatiques avec System Upgrade Controller
 
