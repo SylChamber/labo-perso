@@ -170,6 +170,79 @@ Il est préférable de déployer `step-ca` en dehors de Kubernetes puisque c'est
 
 > L'ennui avec cette approche, c'est la nécessité de déployer un proxy pour transférer les requêtes à un domaine sans port par SNI. Comme il y a déjà un proxy dans k3s, aussi bien déployer dans k3s. Le cluster n'a pas besoin d'utiliser l'autorité de certificat à l'installation.
 
+## Mises à niveau automatiques avec System Upgrade Controller
+
+Un cluster k3s peut être mis à niveau automatiquement à l'aide du [System Upgrade Controller](https://github.com/rancher/system-upgrade-controller/) de Rancher. Ce dernier fonctionne avec le concept de `Plan` de mise à niveau qui permet de spécifier un canal stable de mises à jour.
+
+On doit d'abord [installer System Upgrade Controller et ses CRDs](#installation-du-system-upgrade-controller), puis on configure des `Plans` de mise à niveau.
+
+### Installation du System Upgrade Controller
+
+La documentation de k3s indique [comment installer le System Upgrade Controller](https://docs.k3s.io/upgrades/automated#installation). Cette procédure ne peut toutefois être appliquée directement dans openSUSE MicroOS.
+
+C'est parce que le pod déployé par le contrôleur utilise les autorités de certificat de l'OS et monte les volumes suivants:
+
+* `/etc/pki`
+* `/etc/ssl`
+
+Or, sur MicroOS, les certificats sont localisés sous `/var/lib/ca-certificates` et le dossier `/etc/ssl` réfère à des liens symboliques:
+
+```shell
+> dir /etc/ssl
+total 48K
+drwxr-xr-x. 1 root root  134  6 oct 09:31 .
+drwxr-xr-x. 1 root root 2,3K 21 oct 04:31 ..
+lrwxrwxrwx. 1 root root   33  6 oct 09:31 certs -> ../../var/lib/ca-certificates/pem
+drwx------. 1 root root    0 16 sep 20:56 private
+lrwxrwxrwx. 1 root root   43  6 oct 09:31 ca-bundle.pem -> ../../var/lib/ca-certificates/ca-bundle.pem
+-rw-r--r--. 1 root root  412 16 sep 20:56 ct_log_list.cnf
+-rw-r--r--. 1 root root  13K 16 sep 20:56 openssl.cnf
+-rw-r--r--. 1 root root  13K 16 sep 20:56 openssl-orig.cnf
+```
+
+Les liens symboliques ne sont pas résolus lorsque le dossier est monté dans le pod. Le pod n'a donc pas accès à un bundle d'autorités de certificat, et un plan de mise à niveau ne fonctionne pas à cause d'erreurs de certificats:
+
+```shell
+> kubectl get events -n system-upgrade
+LAST SEEN   TYPE      REASON              OBJECT                                            MESSAGE
+53m         Normal    Validated           plan/agent-plan                                   Plan is valid
+49m         Warning   ResolveFailed       plan/agent-plan                                   Failed to resolve latest version from Spec.Channel: Get "https://update.k3s.io/v1-release/channels/stable": tls: failed to verify certificate: x509: certificate signed by unknown authority
+53m         Normal    Validated           plan/server-plan                                  Plan is valid
+41m         Warning   ResolveFailed       plan/server-plan                                  Failed to resolve latest version from Spec.Channel: Get "https://update.k3s.io/v1-release/channels/stable": tls: failed to verify certificate: x509: certificate signed by unknown authority
+```
+
+La solution est de modifier le manifeste YAML du `system-upgrade-controller` afin de monter **également** les dossiers liés symboliquement:
+
+```yaml
+        volumeMounts:
+        - mountPath: /etc/ssl
+          name: etc-ssl
+          readOnly: true
+        - mountPath: /etc/pki
+          name: etc-pki
+          readOnly: true
+        - mountPath: /var/lib/ca-certificates
+          name: var-lib-ca-certificates
+          readOnly: true
+      volumes:
+      - hostPath:
+          path: /etc/ssl
+          type: DirectoryOrCreate
+        name: etc-ssl
+      - hostPath:
+          path: /etc/pki
+          type: DirectoryOrCreate
+        name: etc-pki
+      - hostPath:
+          path: /var/lib/ca-certificates
+          type: DirectoryOrCreate
+        name: var-lib-ca-certificates
+```
+
+Références:
+
+* [error getting latest release because "x509: certificate signed by unknown authority"](https://github.com/rancher/system-upgrade-controller/issues/105)
+
 ## Expositions d'applications avec Ingress API
 
 L'API Ingress de Kubernetes permet de rediriger les requêtes HTTP selon le domaine, avec [SNI](https://fr.wikipedia.org/wiki/Server_Name_Indication). k3s supporte nativement la fonctionnalité avec Traefik.
@@ -362,6 +435,7 @@ INSTALL_K3S_SYSTEMD_DIR=/usr/lib/systemd/system \
 * [Configuration Options - k3s Docs](https://docs.k3s.io/installation/configuration)
   * [Multiple Config Files - Configuration Options - k3s Docs](https://docs.k3s.io/installation/configuration?_highlight=config.yaml.d#multiple-config-files)
 * [Upgrades - k3s Docs](https://docs.k3s.io/upgrades)
+  * [Automated Upgrades](https://docs.k3s.io/upgrades/automated)
 * [Taints and Tolerations - Example Use Cases - Kubernetes Docs](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#example-use-cases)
 * [Resource Management for Pods and Containers - Extended resources - Kubernetes Docs](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#extended-resources)
 * [Admission Control in Kubernetes - ExtendedResourceToleration - Kubernetes Docs](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#extendedresourcetoleration)
