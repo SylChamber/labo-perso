@@ -153,6 +153,21 @@ Il faut créer ce fichier sous `/etc/firefox/policies/policies.json`, puis relan
 }
 ```
 
+Valider que Firefox utilise la nouvelle configuration:
+
+* Ouvrir les Paramètres
+* Aller dans **Vie privée et sécurité**
+* Sous **Sécurité** > **Certificats**
+  * Cliquer sur **Périphériques de sécurité**
+    * Sous **Modules et périphériques**, on devrait trouver:
+      * `p11-kit-trust`
+        * chemin: `/usr/lib/x86_64-linux-gnu/pkcs11/p11-kit-trust.so`
+      * sous `p11-kit-trust`, on devrait trouver:
+        * Statut: `Prêt`
+        * Description: `/etc/ssl/certs/ca-certificates.crt`
+  * Cliquer sur **Afficher les certificats**
+    * Dans l'onglet **Autorités**, on devrait trouver l'autorité privée ajoutée
+
 Références:
 
 * [Add certificate authorities system-wide on Firefox - AskUbuntu](https://askubuntu.com/questions/244582/add-certificate-authorities-system-wide-on-firefox#answer-1535553)
