@@ -48,8 +48,4 @@ step certificate create "$CERT_NAME" \
   --template $SCRIPT_DIR/certificate.json.tpl \
   --insecure --no-password
 
-# ajout du ca racine au bundle pour Firefox, qui, sinon, ne reconnait pas le certificat comme étant valide
-# même si l'OS le contient
-cat $CERTS_DIR/root_ca.crt >> $CERTS_DIR/$CERT_FILENAME.crt
-
 >&2 echo "Certificat créé sous $CERT_FILENAME/$CERT_FILENAME.{crt,key}"
