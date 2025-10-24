@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Crée du manifeste YAML Kubernetes de secrets pour la gestion des certificat avec step-ca
+# TODO: envisager un chart Helm!
 
 set -eo pipefail
 
@@ -14,19 +15,25 @@ fi
 
 SCRIPT_DIR=$(dirname "$0")
 REPO_ROOT_DIR=$(git rev-parse --show-toplevel)
-CERTS_DIR=$REPO_ROOT_DIR/certs
+# Si STEPPATH n'existe pas, définir un dossier par défaut
+STEPPATH=${STEPPATH:-~/.local/state/step}
+CERTS_DIR=$STEPPATH/certs
+
+ROOT_CA_NAME=root_ca
+INTERMEDIATE_CA_NAME=intermediate_ca
+JWK_PROVISIONER_NAME=jwk_provisioner
 
 # Assurer la présence des fichiers de secrets
 fichiers=(
-    intermediate-tls.crt
-    intermediate-tls.key
-    intermediate-tls.password
-    jwk_provisioner.key
-    jwk_provisioner.password
-    jwk_provisioner.pub
-    root-tls.crt
-    root-tls.key
-    root-tls.password
+    ${INTERMEDIATE_CA_NAME}.crt
+    ${INTERMEDIATE_CA_NAME}.key
+    ${INTERMEDIATE_CA_NAME}.password
+    ${JWK_PROVISIONER_NAME}.key
+    ${JWK_PROVISIONER_NAME}.password
+    ${JWK_PROVISIONER_NAME}.pub
+    ${ROOT_CA_NAME}.crt
+    ${ROOT_CA_NAME}.key
+    ${ROOT_CA_NAME}.password
 )
 for f in ${fichiers[@]}; do
     if [ ! -f $CERTS_DIR/$f ]; then
@@ -54,19 +61,19 @@ indent() {
     cat $fichier | sed "s/^/$espaces/"
 }
 
-export INTERMEDIATE_CA_KEY=$(indent 4 intermediate-tls.key)
-export INTERMEDIATE_CA_CRT=$(indent 4 intermediate-tls.crt)
-export INTERMEDIATE_TLS_PASSWORD_B64=$(cat $CERTS_DIR/intermediate-tls.password |
+export INTERMEDIATE_CA_KEY=$(indent 4 ${INTERMEDIATE_CA_NAME}.key)
+export INTERMEDIATE_CA_CRT=$(indent 4 ${INTERMEDIATE_CA_NAME}.crt)
+export INTERMEDIATE_TLS_PASSWORD_B64=$(cat $CERTS_DIR/${INTERMEDIATE_CA_NAME}.password |
     base64 --wrap=0)
-export ROOT_CA_KEY=$(indent 4 root-tls.key)
-export ROOT_CA_CRT=$(indent 4 root-tls.crt)
-export ROOT_CA_FINGERPRINT=$(step certificate fingerprint $CERTS_DIR/root-tls.crt)
+export ROOT_CA_KEY=$(indent 4 ${ROOT_CA_NAME}.key)
+export ROOT_CA_CRT=$(indent 4 ${ROOT_CA_NAME}.crt)
+export ROOT_CA_FINGERPRINT=$(step certificate fingerprint $CERTS_DIR/${ROOT_CA_NAME}.crt)
 
-export JWK_PROVISIONER_ENCRYPTED_KEY=$(cat $CERTS_DIR/jwk_provisioner.key |
+export JWK_PROVISIONER_ENCRYPTED_KEY=$(cat $CERTS_DIR/${JWK_PROVISIONER_NAME}.key |
     step crypto jose format |
-    tee $CERTS_DIR/jwk_provisioner.encrypted.key)
-export JWK_PROVISIONER_KEY=$(indent 12 jwk_provisioner.pub)
-export JWK_PROVISIONER_PASSWORD_B64=$(cat $CERTS_DIR/jwk_provisioner.password |
+    tee $CERTS_DIR/${JWK_PROVISIONER_NAME}.encrypted.key)
+export JWK_PROVISIONER_KEY=$(indent 12 ${JWK_PROVISIONER_NAME}.pub)
+export JWK_PROVISIONER_PASSWORD_B64=$(cat $CERTS_DIR/${JWK_PROVISIONER_NAME}.password |
     base64 --wrap=0)
 
 >&2 echo "Génération du manifeste Kubernetes pour la gestion des certificats..."
