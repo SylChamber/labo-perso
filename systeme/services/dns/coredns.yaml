@@ -35,22 +35,26 @@ data:
                             1209600     ; Expire
                             3600 )      ; Negative Cache TTL
 
-    @           IN      NS      ns.internal.
-    ns          IN      A       192.168.50.115
+    @                   IN      NS      ns.internal.
+    ns                  IN      A       192.168.50.115
 
-    arcade      IN      A       192.168.50.185
-    ai          IN      CNAME   arcade.internal.
-    ia          IN      CNAME   arcade.internal.
+    arcade              IN      A       192.168.50.185
+    ai                  IN      CNAME   arcade.internal.
+    ia                  IN      CNAME   arcade.internal.
 
-    motel       IN      A       192.168.50.115
-    ca          IN      CNAME   motel.internal.
-    certificats IN      CNAME   motel.internal.
-    cloud       IN      CNAME   motel.internal.
-    k3s         IN      CNAME   motel.internal.
-    kubernetes  IN      CNAME   motel.internal.
-    nuage       IN      CNAME   motel.internal.
+    imprimante          IN      A       192.168.50.125
+    printer             IN      CNAME   imprimante.internal.
+    brother_hl_l2465dw  IN      CNAME   imprimante.internal.
 
-    routeur     IN      A       192.168.50.1
+    motel               IN      A       192.168.50.115
+    ca                  IN      CNAME   motel.internal.
+    certificats         IN      CNAME   motel.internal.
+    cloud               IN      CNAME   motel.internal.
+    k3s                 IN      CNAME   motel.internal.
+    kubernetes          IN      CNAME   motel.internal.
+    nuage               IN      CNAME   motel.internal.
+
+    routeur             IN      A       192.168.50.1
 kind: ConfigMap
 metadata:
   labels:
