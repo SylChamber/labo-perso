@@ -49,3 +49,5 @@ microos/combustion/*.pub
 .key
 .password
 /certs/*
+/paquets/step-ca-secrets/secrets
+/paquets/step-ca-secrets/secrets/*
