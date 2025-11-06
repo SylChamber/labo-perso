@@ -1,0 +1,19 @@
+# Default values for step-ca-secrets.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Remplace le nom de la charte
+nameOverride: ""
+# Remplace le nom complet (fullname) d'application
+fullnameOverride: ""
+
+# Valeurs des secrets
+secrets:
+  # Clé chiffrée de l'autorité de certificat intermédiaire
+  intermediate_ca_key:
+  # Mot de passe de l'autorité de certificat émetteur, intermediate_ca
+  intermediate_ca_password: ""
+  # Mot de passe du certificat du provisionneur JWK
+  provisioner_password: ""
+  # Clé chiffrée de l'autorité de certificat racine
+  root_ca_key: ""

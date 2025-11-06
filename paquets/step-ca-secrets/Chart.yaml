@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: "0.28.4"
+name: step-ca-secrets
+description: Provisionne des secrets pour step-ca, le serveur ACME et provisionneur de certificats TLS
+type: application
+version: 0.1.0
