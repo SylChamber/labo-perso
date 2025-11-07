@@ -16,4 +16,4 @@ secrets:
   # Mot de passe du certificat du provisionneur JWK
   provisioner_password: ""
   # Clé chiffrée de l'autorité de certificat racine
-  root_ca_key: ""
+  root_ca_key:
