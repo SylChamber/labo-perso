@@ -7,13 +7,20 @@ nameOverride: ""
 # Remplace le nom complet (fullname) d'application
 fullnameOverride: ""
 
+# Certificats publics
+certificats:
+  # Certificat public de l'autorité intermédiaire émettrice
+  intermediate_ca: ""
+  # Certificat public de l'autorité racine
+  root_ca: ""
+
 # Valeurs des secrets
 secrets:
   # Clé chiffrée de l'autorité de certificat intermédiaire
-  intermediate_ca_key:
+  intermediate_ca_key: ""
   # Mot de passe de l'autorité de certificat émetteur, intermediate_ca
   intermediate_ca_password: ""
   # Mot de passe du certificat du provisionneur JWK
   provisioner_password: ""
   # Clé chiffrée de l'autorité de certificat racine
-  root_ca_key:
+  root_ca_key: ""
