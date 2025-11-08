@@ -2,5 +2,27 @@ apiVersion: v2
 appVersion: "0.28.4"
 name: step-ca-secrets
 description: Provisionne des secrets pour step-ca, le serveur ACME et provisionneur de certificats TLS
+icon: https://raw.githubusercontent.com/smallstep/certificates/master/icon.png
+keywords:
+  - acme
+  - authority
+  - ca
+  - certificate
+  - certificates
+  - certificate-authority
+  - kubernetes
+  - pki
+  - security
+  - security-tools
+  - smallstep
+  - ssh
+  - step
+  - step-ca
+  - tls
+  - x509
+sources:
+  - https://github.com/SylChamber/labo-perso/paquets/step-ca-secrets
+  - https://artifacthub.io/packages/helm/smallstep/step-certificates
+  - https://github.com/smallstep/certificates
 type: application
 version: 0.1.0

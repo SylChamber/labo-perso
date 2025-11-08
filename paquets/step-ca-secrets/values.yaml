@@ -7,20 +7,29 @@ nameOverride: ""
 # Remplace le nom complet (fullname) d'application
 fullnameOverride: ""
 
-# Certificats publics
-certificats:
-  # Certificat public de l'autorité intermédiaire émettrice
-  intermediate_ca: ""
-  # Certificat public de l'autorité racine
-  root_ca: ""
-
-# Valeurs des secrets
-secrets:
+# Autorité de certificat intermédiaire, émettrice de certificats
+intermediate_ca:
   # Clé chiffrée de l'autorité de certificat intermédiaire
-  intermediate_ca_key: ""
+  key: ""
+  # Certificat public en format PEM de l'autorité intermédiaire émettrice
+  pem: ""
   # Mot de passe de l'autorité de certificat émetteur, intermediate_ca
-  intermediate_ca_password: ""
+  password: ""
+
+# Provisionneur JWK
+provisioner:
+  # Clé chiffrée du provisionneur JWK (ex. provisioner.encrypted.key), pour valeur "encryptedKey"
+  key: ""
+  # Clé publique du provisionneur JWK, pour valeur "key"
+  pub: ""
   # Mot de passe du certificat du provisionneur JWK
-  provisioner_password: ""
+  password: ""
+
+# Autorité de certificat racine
+root_ca:
   # Clé chiffrée de l'autorité de certificat racine
-  root_ca_key: ""
+  key: ""
+  # Certificat public en format PEM de l'autorité racine
+  pem: ""
+  # Empreinte SHA256 (fingerprint) de l'autorité racine de certificat ('step certificate fingerprint root_ca.crt')
+  fingerprint: ""

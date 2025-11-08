@@ -6,5 +6,5 @@ metadata:
   name: {{ include "step-ca-secrets.fullname" . }}-certs
   namespace: {{ .Release.Namespace }}
 data:
-  intermediate_ca.crt: |-{{ required "certificats.intermediate_ca" .Values.certificats.intermediate_ca | nindent 4 }}
-  root_ca.crt: |-{{ required "certificats.root_ca" .Values.certificats.root_ca | nindent 4 }}
+  intermediate_ca.crt: |-{{ required "intermediate_ca.pem est requise" .Values.intermediate_ca.pem | nindent 4 }}
+  root_ca.crt: |-{{ required "root_ca.pem est requise" .Values.root_ca.pem | nindent 4 }}

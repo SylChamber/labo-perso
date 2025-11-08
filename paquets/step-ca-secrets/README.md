@@ -1,6 +1,6 @@
 # Secrets pour step-ca
 
-Provisionne des secrets pour le serveur ACME et provisionneur de certificat `step-ca`.
+Provisionne des secrets pour le serveur ACME et provisionneur de certificat `step-ca`. C'est un préalable à l'installation de `step-ca` à l'aide de la charte Helm [step-certificates](https://artifacthub.io/packages/helm/smallstep/step-certificates).
 
 Requiert les fichiers suivants qui auront été créés au préalable par la cli `step` avec le script [scripts/creer-ca.sh](../../scripts/creer-ca.sh) à l'aide de la tâche `certs:ca` (`task certs:ca`).
 
@@ -8,8 +8,14 @@ Requiert les fichiers suivants qui auront été créés au préalable par la cli
 * `intermediate_ca.key`: clé chiffrée de l'autorité de certificat intermédiaire
 * `intermediate_ca.crt`: certificat public de l'autorité intermédiaire
 * `jwk_provisioner.password`: mot de passe du provisionneur JWK
+* `jwk_provisioner.encrypted.key`: clé chiffrée du provisionneur JWK
+* `jwk_provisioner.pub`: clé publique du provisionneur JWK
 * `root_ca.key`: clé chiffrée de l'autorité de certificat racine
 * `root_ca.crt`: certificat public de l'autorité racine
+
+> La cli `step` est également requise pour compiler l'empreinte (_fingerprint_) de l'autorité de certificat racine.
+
+## Vérification du rendu
 
 Pour vérifier le rendu, exécuter:
 
@@ -18,15 +24,53 @@ Pour vérifier le rendu, exécuter:
 > **Important**: le nom de la charte doit être **remplacé** avec `nameOverride`, car cette charte crée des objets pour la charte `step-certificates` qui permet de déployer `step-ca`. Le nom doit donc être **le même**.
 
 ```shell
-$CERTS=$HOME/.local/state/step/certs
+CERTS=$HOME/.local/state/step/certs
 helm template acme \
 -n step-ca \
 --set nameOverride=step-certificates \
---set-file secrets.intermediate_ca_password=$CERTS/intermediate_ca.password \
---set-file secrets.provisioner_password=$CERTS/jwk_provisioner.password \
---set-file secrets.intermediate_ca_key=$CERTS/intermediate_ca.key \
---set-file secrets.root_ca_key=$CERTS/root_ca.key \
---set-file certificats.intermediate_ca=$CERTS/intermediate_ca.crt \
---set-file certificats.root_ca=$CERTS/root_ca.crt \
-./
+--set-file intermediate_ca.key=$CERTS/intermediate_ca.key \
+--set-file intermediate_ca.password=$CERTS/intermediate_ca.password \
+--set-file intermediate_ca.pem=$CERTS/intermediate_ca.crt \
+--set-file provisioner.key=$CERTS/jwk_provisioner.encrypted.key \
+--set-file provisioner.password=$CERTS/jwk_provisioner.password \
+--set-file provisioner.pub=$CERTS/jwk_provisioner.pub \
+--set-file root_ca.key=$CERTS/root_ca.key \
+--set-file root_ca.pem=$CERTS/root_ca.crt \
+--set root_ca.fingerprint=$(step certificate fingerprint $CERTS/root_ca.crt) \
+.
 ```
+
+## Déploiement des secrets et de la configuration de step-ca
+
+Pour déployer cette charte, exécuter:
+
+> Remplacer `$CERTS` par le chemin vers les fichiers requis.
+>
+> **Important**:
+>
+> * le nom de la charte doit être **remplacé** avec `nameOverride`, car cette charte crée des objets pour la charte `step-certificates` qui permet de déployer `step-ca`. Le nom doit donc être **le même**.
+> * le nom de la release, le namespace et le nom de la charte `step-certificates` (si on le remplace avec `nameOverride`) doivent **être les mêmes** qu'au déploiement de la charte `step-certificates` puisque cette charte-ci sert à fournir les secrets et la configuration à la charte `step-certificate`.
+
+```shell
+CERTS=$HOME/.local/state/step/certs
+helm install acme \
+-n step-ca \
+--set nameOverride=step-certificates \
+--set-file intermediate_ca.key=$CERTS/intermediate_ca.key \
+--set-file intermediate_ca.password=$CERTS/intermediate_ca.password \
+--set-file intermediate_ca.pem=$CERTS/intermediate_ca.crt \
+--set-file provisioner.key=$CERTS/jwk_provisioner.encrypted.key \
+--set-file provisioner.password=$CERTS/jwk_provisioner.password \
+--set-file provisioner.pub=$CERTS/jwk_provisioner.pub \
+--set-file root_ca.key=$CERTS/root_ca.key \
+--set-file root_ca.pem=$CERTS/root_ca.crt \
+--set root_ca.fingerprint=$(step certificate fingerprint $CERTS/root_ca.crt) \
+.
+```
+
+## Références
+
+* [step-ca](https://github.com/smallstep/certificates)
+* [step-certificates - ArtifactHUB](https://artifacthub.io/packages/helm/smallstep/step-certificates) (charte Helm)
+* [step-ca Documentation](https://smallstep.com/docs/step-ca/)
+* [step - Documentation](https://smallstep.com/docs/step-cli/) (CLI)
