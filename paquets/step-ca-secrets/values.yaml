@@ -2,34 +2,34 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# Remplace le nom de la charte
+# -- Remplace le nom de la charte
 nameOverride: ""
-# Remplace le nom complet (fullname) d'application
+# -- Remplace le nom complet (fullname) d'application
 fullnameOverride: ""
 
-# Autorité de certificat intermédiaire, émettrice de certificats
+# -- Autorité de certificat intermédiaire, émettrice de certificats
 intermediate_ca:
-  # Clé chiffrée de l'autorité de certificat intermédiaire
+  # -- Clé chiffrée de l'autorité de certificat intermédiaire
   key: ""
-  # Certificat public en format PEM de l'autorité intermédiaire émettrice
+  # -- Certificat public en format PEM de l'autorité intermédiaire émettrice
   pem: ""
-  # Mot de passe de l'autorité de certificat émetteur, intermediate_ca
+  # -- Mot de passe de l'autorité de certificat émetteur, intermediate_ca
   password: ""
 
-# Provisionneur JWK
+# -- Provisionneur JWK
 provisioner:
-  # Clé chiffrée du provisionneur JWK (ex. provisioner.encrypted.key), pour valeur "encryptedKey"
+  # -- Clé chiffrée du provisionneur JWK (ex. provisioner.encrypted.key), pour valeur "encryptedKey"
   key: ""
-  # Clé publique du provisionneur JWK, pour valeur "key"
+  # -- Clé publique du provisionneur JWK, pour valeur "key"
   pub: ""
-  # Mot de passe du certificat du provisionneur JWK
+  # -- Mot de passe du certificat du provisionneur JWK
   password: ""
 
 # Autorité de certificat racine
 root_ca:
-  # Clé chiffrée de l'autorité de certificat racine
+  # -- Clé chiffrée de l'autorité de certificat racine
   key: ""
-  # Certificat public en format PEM de l'autorité racine
+  # -- Certificat public en format PEM de l'autorité racine
   pem: ""
-  # Empreinte SHA256 (fingerprint) de l'autorité racine de certificat ('step certificate fingerprint root_ca.crt')
+  # -- Empreinte SHA256 (fingerprint) de l'autorité racine de certificat ('step certificate fingerprint root_ca.crt')
   fingerprint: ""
