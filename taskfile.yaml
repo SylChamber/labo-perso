@@ -11,6 +11,20 @@ env:
   CERTS_DIR:
     sh: echo $STEPPATH/certs
 
+vars:
+  STEP_CONFIG_VARS: |-
+    --namespace step-ca \
+    --set nameOverride=step-certificates \
+    --set-file intermediate_ca.key=$CERTS_DIR/intermediate_ca.key \
+    --set-file intermediate_ca.password=$CERTS_DIR/intermediate_ca.password \
+    --set-file intermediate_ca.pem=$CERTS_DIR/intermediate_ca.crt \
+    --set-file provisioner.key=$CERTS_DIR/jwk_provisioner.encrypted.key \
+    --set-file provisioner.password=$CERTS_DIR/jwk_provisioner.password \
+    --set-file provisioner.pub=$CERTS_DIR/jwk_provisioner.pub \
+    --set-file root_ca.key=$CERTS_DIR/root_ca.key \
+    --set-file root_ca.pem=$CERTS_DIR/root_ca.crt \
+    --set root_ca.fingerprint=$(step certificate fingerprint $CERTS_DIR/root_ca.crt) \
+
 tasks:
   default:
     desc: Liste les tâches.
@@ -43,15 +57,5 @@ tasks:
     desc: Valide la charte step-ca-secrets de configuration de step-ca
     cmd: |
       helm lint \
-      -n step-ca \
-      --set nameOverride=step-certificates \
-      --set-file intermediate_ca.key=$CERTS_DIR/intermediate_ca.key \
-      --set-file intermediate_ca.password=$CERTS_DIR/intermediate_ca.password \
-      --set-file intermediate_ca.pem=$CERTS_DIR/intermediate_ca.crt \
-      --set-file provisioner.key=$CERTS_DIR/jwk_provisioner.encrypted.key \
-      --set-file provisioner.password=$CERTS_DIR/jwk_provisioner.password \
-      --set-file provisioner.pub=$CERTS_DIR/jwk_provisioner.pub \
-      --set-file root_ca.key=$CERTS_DIR/root_ca.key \
-      --set-file root_ca.pem=$CERTS_DIR/root_ca.crt \
-      --set root_ca.fingerprint=$(step certificate fingerprint $CERTS_DIR/root_ca.crt) \
+      {{ .STEP_CONFIG_VARS }}
       paquets/step-ca-secrets
