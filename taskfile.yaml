@@ -3,9 +3,13 @@
 # sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
 # ou installer sous /usr/bin à l'installation de MicroOS
 
-version: '3'
+version: "3"
 
-vars: {}
+env:
+  STEPPATH:
+    sh: realpath ~/.local/state/step
+  CERTS_DIR:
+    sh: echo $STEPPATH/certs
 
 tasks:
   default:
@@ -16,17 +20,17 @@ tasks:
 
   certs:ca:
     desc: Crée les autorités de certificats.
-    dotenv: ['.env', '{{.ENV}}/.venv']
+    dotenv: [".env", "{{.ENV}}/.venv"]
     cmds:
       - scripts/creer-ca.sh
   certs:manifests:
     desc: Crée les manifestes Kubernetes des secrets de la gestion des certificats.
-    dotenv: ['.env', '{{.ENV}}/.venv']
+    dotenv: [".env", "{{.ENV}}/.venv"]
     cmds:
       - scripts/creer-manifeste-secrets-ca.sh
   certs:serveur:
     desc: Crée un certificat 'leaf' pour le serveur
-    dotenv: ['.env', '{{.ENV}}/.venv']
+    dotenv: [".env", "{{.ENV}}/.venv"]
     cmds:
       - scripts/ceer-certificat-serveur.sh
   certs:cleanup:
@@ -34,3 +38,20 @@ tasks:
     prompt: Attention! Avez-vous sauvegardé les fichiers de certificats avant de les supprimer?
     cmds:
       - wipe {{.ROOT_DIR}}/certs/*
+
+  step:config:lint:
+    desc: Valide la charte step-ca-secrets de configuration de step-ca
+    cmd: |
+      helm lint \
+      -n step-ca \
+      --set nameOverride=step-certificates \
+      --set-file intermediate_ca.key=$CERTS_DIR/intermediate_ca.key \
+      --set-file intermediate_ca.password=$CERTS_DIR/intermediate_ca.password \
+      --set-file intermediate_ca.pem=$CERTS_DIR/intermediate_ca.crt \
+      --set-file provisioner.key=$CERTS_DIR/jwk_provisioner.encrypted.key \
+      --set-file provisioner.password=$CERTS_DIR/jwk_provisioner.password \
+      --set-file provisioner.pub=$CERTS_DIR/jwk_provisioner.pub \
+      --set-file root_ca.key=$CERTS_DIR/root_ca.key \
+      --set-file root_ca.pem=$CERTS_DIR/root_ca.crt \
+      --set root_ca.fingerprint=$(step certificate fingerprint $CERTS_DIR/root_ca.crt) \
+      paquets/step-ca-secrets
