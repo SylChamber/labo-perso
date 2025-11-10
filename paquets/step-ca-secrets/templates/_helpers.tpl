@@ -2,7 +2,7 @@
 Expand the name of the chart.
 */}}
 {{- define "step-ca-secrets.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- default .Chart.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
@@ -49,7 +49,7 @@ Common labels
 */}}
 {{- define "step-ca-secrets.labels" -}}
 helm.sh/chart: {{ include "step-ca-secrets.chart" . }}
-app.kubernetes.io/name: {{ include "step-ca-secrets.name" . }}
+app.kubernetes.io/name: {{ include "step-ca-secrets.nameOverride" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
