@@ -12,9 +12,13 @@ env:
     sh: echo $STEPPATH/certs
 
 vars:
+  STEP_RELEASE_NAME: acme
+  STEP_NAMESPACE: step-ca
+  STEP_CHART_NAME: step-certificates
+  STEP_CONFIG_CHART_PATH: paquets/step-ca-secrets
   STEP_CONFIG_VARS: |-
     --namespace step-ca \
-    --set nameOverride=step-certificates \
+    --set nameOverride={{ .STEP_CHART_NAME }} \
     --set-file intermediate_ca.key=$CERTS_DIR/intermediate_ca.key \
     --set-file intermediate_ca.password=$CERTS_DIR/intermediate_ca.password \
     --set-file intermediate_ca.pem=$CERTS_DIR/intermediate_ca.crt \
@@ -58,4 +62,10 @@ tasks:
     cmd: |
       helm lint \
       {{ .STEP_CONFIG_VARS }}
-      paquets/step-ca-secrets
+      {{ .STEP_CONFIG_CHART_PATH }}
+  step:config:render:
+    desc: Fait le rendu de la charte step-ca-secrets de configuration de step-ca
+    cmd: |
+      helm template {{ .STEP_RELEASE_NAME }} \
+      {{ .STEP_CONFIG_VARS }}
+      {{ .STEP_CONFIG_CHART_PATH }}
