@@ -1,4 +1,8 @@
-Les secrets et la configuration pour step-ca ont été déployés.
+Les secrets et la configuration pour step-ca ont été déployés. Le certificat de step-ca est configuré pour répondre aux noms DNS suivants:
+
+{{ if .Values.supplementaryDnsNames -}}
+{{ range .Values.supplementaryDnsNames }}{{ "- " }}{{ . }}{{ "\n" }}{{ end }}
+{{ end -}}
 
 Assurez-vous de déployer la charte `step-certificates` avec ces valeurs de nom de release, nom de charte et namespace:
 

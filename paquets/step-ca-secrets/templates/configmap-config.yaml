@@ -46,8 +46,9 @@ data:
         "type": "badgerv2"
       },
       "dnsNames": [
-        "ca.internal",
-        "ac.internal",
+{{- if .Values.supplementaryDnsNames -}}
+{{ range .Values.supplementaryDnsNames }}{{ . | quote | nindent 8 }}{{ "," }}{{ end }}
+{{- end }}
         "{{ include "step-ca-secrets.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local",
         "127.0.0.1"
       ],

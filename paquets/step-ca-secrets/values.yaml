@@ -25,7 +25,7 @@ provisioner:
   # -- Mot de passe du certificat du provisionneur JWK
   password: ""
 
-# Autorité de certificat racine
+# -- Autorité de certificat racine
 root_ca:
   # -- Clé chiffrée de l'autorité de certificat racine
   key: ""
@@ -33,3 +33,10 @@ root_ca:
   pem: ""
   # -- Empreinte SHA256 (fingerprint) de l'autorité racine de certificat ('step certificate fingerprint root_ca.crt')
   fingerprint: ""
+
+# -- Noms DNS supplémentaires pour le certificat de step; changer pour vos propres noms DNS
+supplementaryDnsNames:
+  - ac.localhost
+  - ca.localhost
+  - ac.internal
+  - ca.internal

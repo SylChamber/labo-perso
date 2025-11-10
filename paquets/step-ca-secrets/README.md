@@ -83,21 +83,23 @@ helm install acme-config \
 
 ## Values
 
-| Key                      | Type   | Default                             | Description                                                                                                    |
-| ------------------------ | ------ | ----------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| intermediate_ca          | object | `{"key":"","password":"","pem":""}` | Autorité de certificat intermédiaire, émettrice de certificats                                                 |
-| intermediate_ca.key      | string | `""`                                | Clé chiffrée de l'autorité de certificat intermédiaire                                                         |
-| intermediate_ca.password | string | `""`                                | Mot de passe de l'autorité de certificat émetteur, intermediate_ca                                             |
-| intermediate_ca.pem      | string | `""`                                | Certificat public en format PEM de l'autorité intermédiaire émettrice                                          |
-| nameOverride             | string | `"step-certificates"`               | Remplace le nom de la charte dans les objets déployés                                                          |
-| provisioner              | object | `{"key":"","password":"","pub":""}` | Provisionneur JWK                                                                                              |
-| provisioner.key          | string | `""`                                | Clé chiffrée du provisionneur JWK (ex. provisioner.encrypted.key), pour valeur "encryptedKey"                  |
-| provisioner.password     | string | `""`                                | Mot de passe du certificat du provisionneur JWK                                                                |
-| provisioner.pub          | string | `""`                                | Clé publique du provisionneur JWK, pour valeur "key"                                                           |
-| releaseOverride          | string | `"acme"`                            | Remplace le nom de la release dans les objets déployés                                                         |
-| root_ca.fingerprint      | string | `""`                                | Empreinte SHA256 (fingerprint) de l'autorité racine de certificat ('step certificate fingerprint root_ca.crt') |
-| root_ca.key              | string | `""`                                | Clé chiffrée de l'autorité de certificat racine                                                                |
-| root_ca.pem              | string | `""`                                | Certificat public en format PEM de l'autorité racine                                                           |
+| Key                      | Type   | Default                                                       | Description                                                                                                    |
+| ------------------------ | ------ | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| intermediate_ca          | object | `{"key":"","password":"","pem":""}`                           | Autorité de certificat intermédiaire, émettrice de certificats                                                 |
+| intermediate_ca.key      | string | `""`                                                          | Clé chiffrée de l'autorité de certificat intermédiaire                                                         |
+| intermediate_ca.password | string | `""`                                                          | Mot de passe de l'autorité de certificat émetteur, intermediate_ca                                             |
+| intermediate_ca.pem      | string | `""`                                                          | Certificat public en format PEM de l'autorité intermédiaire émettrice                                          |
+| nameOverride             | string | `"step-certificates"`                                         | Remplace le nom de la charte dans les objets déployés                                                          |
+| provisioner              | object | `{"key":"","password":"","pub":""}`                           | Provisionneur JWK                                                                                              |
+| provisioner.key          | string | `""`                                                          | Clé chiffrée du provisionneur JWK (ex. provisioner.encrypted.key), pour valeur "encryptedKey"                  |
+| provisioner.password     | string | `""`                                                          | Mot de passe du certificat du provisionneur JWK                                                                |
+| provisioner.pub          | string | `""`                                                          | Clé publique du provisionneur JWK, pour valeur "key"                                                           |
+| releaseOverride          | string | `"acme"`                                                      | Remplace le nom de la release dans les objets déployés                                                         |
+| root_ca                  | object | `{"fingerprint":"","key":"","pem":""}`                        | Autorité de certificat racine                                                                                  |
+| root_ca.fingerprint      | string | `""`                                                          | Empreinte SHA256 (fingerprint) de l'autorité racine de certificat ('step certificate fingerprint root_ca.crt') |
+| root_ca.key              | string | `""`                                                          | Clé chiffrée de l'autorité de certificat racine                                                                |
+| root_ca.pem              | string | `""`                                                          | Certificat public en format PEM de l'autorité racine                                                           |
+| supplementaryDnsNames    | list   | `["ac.localhost","ca.localhost","ac.internal","ca.internal"]` | Noms DNS supplémentaires pour le certificat de step; changer pour vos propres noms DNS                         |
 
 ## Références
 
