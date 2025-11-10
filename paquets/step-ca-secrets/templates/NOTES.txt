@@ -1,7 +1,7 @@
 Les secrets et la configuration pour step-ca ont été déployés.
 
-Assurez-vous de déployer la charte `step-certificates` avec les mêmes valeurs de nom de release, nom de charte et namespace:
+Assurez-vous de déployer la charte `step-certificates` avec ces valeurs de nom de release, nom de charte et namespace:
 
-release: {{ .Release.Name }}
-chart name: {{ include "step-ca-secrets.name" . }}
+release: {{ include "step-ca-secrets.releaseOverride" . }}
+chart name: {{ include "step-ca-secrets.nameOverride" . }}
 namespace: {{ .Release.Namespace }}

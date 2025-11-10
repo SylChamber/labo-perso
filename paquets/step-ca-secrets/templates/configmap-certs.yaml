@@ -5,6 +5,8 @@ metadata:
     kubernetes.io/description: Certificats publics des autorités racine et intermédiaire (émettrice)
   name: {{ include "step-ca-secrets.fullname" . }}-certs
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "step-ca-secrets.labels" . | nindent 4 }}
 data:
   intermediate_ca.crt: |-{{ required "intermediate_ca.pem est requise" .Values.intermediate_ca.pem | nindent 4 }}
   root_ca.crt: |-{{ required "root_ca.pem est requise" .Values.root_ca.pem | nindent 4 }}

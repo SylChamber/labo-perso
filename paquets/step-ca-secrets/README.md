@@ -1,6 +1,6 @@
 # Secrets et configuration pour step-ca
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.28.4](https://img.shields.io/badge/AppVersion-0.28.4-informational?style=flat-square)
+![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.28.4](https://img.shields.io/badge/AppVersion-1.28.4-informational?style=flat-square)
 
 Provisionne des secrets pour le serveur ACME et provisionneur de certificat `step-ca`. C'est un préalable à l'installation de `step-ca` à l'aide de la charte Helm [step-certificates](https://artifacthub.io/packages/helm/smallstep/step-certificates).
 
@@ -25,13 +25,14 @@ Pour vérifier le rendu, exécuter:
 
 > Remplacer `$CERTS` par le chemin vers les fichiers requis.
 >
-> **Important**: le nom de la charte doit être **remplacé** avec `nameOverride`, car cette charte crée des objets pour la charte `step-certificates` qui permet de déployer `step-ca`. Le nom doit donc être **le même**.
+> **Important**: les noms de la charte et de la release doivent être **remplacés** avec `nameOverride` et `releaseOverride` (des valeurs par défaut sont définies), car cette charte crée des objets pour la charte `step-certificates` qui permet de déployer `step-ca`. Ces noms doivent donc être **les mêmes** pour que `step-ca` trouve les objets déployés par cette charte.
 
 ```shell
 CERTS=$HOME/.local/state/step/certs
-helm template acme \
--n step-ca \
+helm template acme-config \
+--namespace step-ca \
 --set nameOverride=step-certificates \
+--set releaseOverride=acme \
 --set-file intermediate_ca.key=$CERTS/intermediate_ca.key \
 --set-file intermediate_ca.password=$CERTS/intermediate_ca.password \
 --set-file intermediate_ca.pem=$CERTS/intermediate_ca.crt \
@@ -52,14 +53,16 @@ Pour déployer cette charte, exécuter:
 >
 > **Important**:
 >
-> - le nom de la charte doit être **remplacé** avec `nameOverride`, car cette charte crée des objets pour la charte `step-certificates` qui permet de déployer `step-ca`. Le nom doit donc être **le même**.
-> - le nom de la release, le namespace et le nom de la charte `step-certificates` (si on le remplace avec `nameOverride`) doivent **être les mêmes** qu'au déploiement de la charte `step-certificates` puisque cette charte-ci sert à fournir les secrets et la configuration à la charte `step-certificate`.
+> - les noms de la charte et de la release doivent être **remplacés** avec `nameOverride` et `releaseOverride` (des valeurs par défaut sont définies), car cette charte crée des objets pour la charte `step-certificates` qui permet de déployer `step-ca`. Ces noms doivent donc être **les mêmes** pour que `step-ca` trouve les objets déployés par cette charte. Cette charte utilise ces remplacements de nom pour nommer les objets, plutôt que ses noms de charte et de release.
+> - le namespace doit **être le même** qu'au déploiement de la charte `step-certificates` puisque cette charte-ci sert à fournir les secrets et la configuration à la charte `step-certificate`.
 
 ```shell
+kubectl create namespace step-ca
 CERTS=$HOME/.local/state/step/certs
-helm install acme \
--n step-ca \
+helm install acme-config \
+--namespace step-ca \
 --set nameOverride=step-certificates \
+--set releaseOverride=acme \
 --set-file intermediate_ca.key=$CERTS/intermediate_ca.key \
 --set-file intermediate_ca.password=$CERTS/intermediate_ca.password \
 --set-file intermediate_ca.pem=$CERTS/intermediate_ca.crt \
@@ -82,16 +85,16 @@ helm install acme \
 
 | Key                      | Type   | Default                             | Description                                                                                                    |
 | ------------------------ | ------ | ----------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| fullnameOverride         | string | `""`                                | Remplace le nom complet (fullname) d'application                                                               |
 | intermediate_ca          | object | `{"key":"","password":"","pem":""}` | Autorité de certificat intermédiaire, émettrice de certificats                                                 |
 | intermediate_ca.key      | string | `""`                                | Clé chiffrée de l'autorité de certificat intermédiaire                                                         |
 | intermediate_ca.password | string | `""`                                | Mot de passe de l'autorité de certificat émetteur, intermediate_ca                                             |
 | intermediate_ca.pem      | string | `""`                                | Certificat public en format PEM de l'autorité intermédiaire émettrice                                          |
-| nameOverride             | string | `""`                                | Remplace le nom de la charte                                                                                   |
+| nameOverride             | string | `"step-certificates"`               | Remplace le nom de la charte dans les objets déployés                                                          |
 | provisioner              | object | `{"key":"","password":"","pub":""}` | Provisionneur JWK                                                                                              |
 | provisioner.key          | string | `""`                                | Clé chiffrée du provisionneur JWK (ex. provisioner.encrypted.key), pour valeur "encryptedKey"                  |
 | provisioner.password     | string | `""`                                | Mot de passe du certificat du provisionneur JWK                                                                |
 | provisioner.pub          | string | `""`                                | Clé publique du provisionneur JWK, pour valeur "key"                                                           |
+| releaseOverride          | string | `"acme"`                            | Remplace le nom de la release dans les objets déployés                                                         |
 | root_ca.fingerprint      | string | `""`                                | Empreinte SHA256 (fingerprint) de l'autorité racine de certificat ('step certificate fingerprint root_ca.crt') |
 | root_ca.key              | string | `""`                                | Clé chiffrée de l'autorité de certificat racine                                                                |
 | root_ca.pem              | string | `""`                                | Certificat public en format PEM de l'autorité racine                                                           |

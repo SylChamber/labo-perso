@@ -1,5 +1,5 @@
 apiVersion: v2
-appVersion: "0.28.4"
+appVersion: "1.28.4"
 name: step-ca-secrets
 description: Provisionne des secrets pour step-ca, le serveur ACME et provisionneur de certificats TLS
 home: https://github.com/SylChamber/labo-perso/paquets/step-ca-secrets

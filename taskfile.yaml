@@ -12,22 +12,28 @@ env:
     sh: echo $STEPPATH/certs
 
 vars:
-  STEP_RELEASE_NAME: acme
-  STEP_NAMESPACE: step-ca
-  STEP_CHART_NAME: step-certificates
-  STEP_CONFIG_CHART_PATH: paquets/step-ca-secrets
-  STEP_CONFIG_VARS: |-
-    --namespace step-ca \
-    --set nameOverride={{ .STEP_CHART_NAME }} \
-    --set-file intermediate_ca.key=$CERTS_DIR/intermediate_ca.key \
-    --set-file intermediate_ca.password=$CERTS_DIR/intermediate_ca.password \
-    --set-file intermediate_ca.pem=$CERTS_DIR/intermediate_ca.crt \
-    --set-file provisioner.key=$CERTS_DIR/jwk_provisioner.encrypted.key \
-    --set-file provisioner.password=$CERTS_DIR/jwk_provisioner.password \
-    --set-file provisioner.pub=$CERTS_DIR/jwk_provisioner.pub \
-    --set-file root_ca.key=$CERTS_DIR/root_ca.key \
-    --set-file root_ca.pem=$CERTS_DIR/root_ca.crt \
-    --set root_ca.fingerprint=$(step certificate fingerprint $CERTS_DIR/root_ca.crt) \
+  step:
+    map:
+      releaseName: acme
+      namespace: step-ca
+      chartName: step-certificates
+  stepConfig:
+    map:
+      chartPath: paquets/step-ca-secrets
+      releaseName: "{{ .step.releaseName }}-config"
+      valueOptions: |-
+        --namespace {{ .step.namespace }} \
+        --set nameOverride={{ .step.chartName }} \
+        --set releaseOverride={{ .step.releaseName }} \
+        --set-file intermediate_ca.key=$CERTS_DIR/intermediate_ca.key \
+        --set-file intermediate_ca.password=$CERTS_DIR/intermediate_ca.password \
+        --set-file intermediate_ca.pem=$CERTS_DIR/intermediate_ca.crt \
+        --set-file provisioner.key=$CERTS_DIR/jwk_provisioner.encrypted.key \
+        --set-file provisioner.password=$CERTS_DIR/jwk_provisioner.password \
+        --set-file provisioner.pub=$CERTS_DIR/jwk_provisioner.pub \
+        --set-file root_ca.key=$CERTS_DIR/root_ca.key \
+        --set-file root_ca.pem=$CERTS_DIR/root_ca.crt \
+        --set root_ca.fingerprint=$(step certificate fingerprint $CERTS_DIR/root_ca.crt) \
 
 tasks:
   default:
@@ -61,11 +67,23 @@ tasks:
     desc: Valide la charte step-ca-secrets de configuration de step-ca
     cmd: |
       helm lint \
-      {{ .STEP_CONFIG_VARS }}
-      {{ .STEP_CONFIG_CHART_PATH }}
+      {{ .stepConfig.valueOptions }}
+      {{ .stepConfig.chartPath }}
   step:config:render:
     desc: Fait le rendu de la charte step-ca-secrets de configuration de step-ca
     cmd: |
-      helm template {{ .STEP_RELEASE_NAME }} \
-      {{ .STEP_CONFIG_VARS }}
-      {{ .STEP_CONFIG_CHART_PATH }}
+      helm template {{ .stepConfig.releaseName }} \
+      {{ .stepConfig.valueOptions }}
+      {{ .stepConfig.chartPath }}
+  step:config:install:
+    desc: Installe les secrets et la configuration prérequis à step-ca (charte step-ca-secrets)
+    cmd: |
+      kubectl create namespace {{ .step.namespace }} ; \
+      helm install {{ .stepConfig.releaseName }} \
+      {{ .stepConfig.valueOptions }}
+      {{ .stepConfig.chartPath }}
+  step:config:uninstall:
+    desc: Supprime les secrets et la configuration prérequis à step-ca (charte step-ca-secrets)
+    cmd: |
+      helm uninstall {{ .stepConfig.releaseName }} ; \
+      kubectl delete namespace {{ .step.namespace }}

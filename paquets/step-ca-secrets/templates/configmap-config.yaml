@@ -5,6 +5,8 @@ metadata:
     kubernetes.io/description: Configuration de step-ca
   name: {{ include "step-ca-secrets.fullname" . }}-config
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "step-ca-secrets.labels" . | nindent 4 }}
 data:
   ca.json: |
     {
