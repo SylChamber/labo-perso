@@ -82,6 +82,12 @@ tasks:
       helm install {{ .stepConfig.releaseName }} \
       {{ .stepConfig.valueOptions }}
       {{ .stepConfig.chartPath }}
+  step:config:upgrade:
+    desc: Met à jour les secrets et la configuration prérequises à step-ca (charte step-ca-secrets)
+    cmd: |
+      helm upgrade {{ .stepConfig.releaseName }} \
+      {{ .stepConfig.valueOptions }}
+      {{ .stepConfig.chartPath }}
   step:config:uninstall:
     desc: Supprime les secrets et la configuration prérequis à step-ca (charte step-ca-secrets)
     cmd: |

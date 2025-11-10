@@ -26,4 +26,4 @@ sources:
   - https://artifacthub.io/packages/helm/smallstep/step-certificates
   - https://github.com/smallstep/certificates
 type: application
-version: 0.1.0
+version: 0.2.0
