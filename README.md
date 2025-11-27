@@ -62,6 +62,10 @@ Voici la feuille de route au plan du _système_ ou de _k3s_. Les serveurs DNS et
 * **(fait)** [système] création d'autorités privées de certificat racine et intermédiaire
   * puisque les certificats sont un élément central, utiliser la CLI `step` pour créer les autorités de certificat
 * **(fait)** [système] création d'un certificat pour le serveur (Cockpit)
+* [système] gestion de la configuration des services podman selon les principes GitOps avec Quad-Ops
+  * FetchIt n'est pas maintenu, et le service CoreDNS stoppe à chaque nuit
+  * installer [Quad-Ops](https://trly.github.io/quad-ops/)
+  * convertir la configuration FetchIt
 * [k3s] serveur de certificats ACME
   * vise à faciliter la gestion des certificats TLS, et sert la même fonction que Let's Encrypt sur un réseau privé
   * déploiement de `step-ca` sous forme de conteneur (voir notes dans [k3s - Gestion des certificats](docs/k3s/README.md#gestion-des-certificats))
@@ -107,3 +111,5 @@ Voici la feuille de route au plan du _système_ ou de _k3s_. Les serveurs DNS et
 * [FetchIt - GitOps-Based Approach of Podman Containers Management](https://fetchit.readthedocs.io)
 * [podman-kube-play man page - create podman resources based on Kubernetes YAML](https://docs.podman.io/en/latest/markdown/podman-kube-play.1.html)
 * [podman-kube-generate man page - generate Kubernetes YAML from podman resources](https://docs.podman.io/en/latest/markdown/podman-kube-generate.1.html)
+* [Quad-Ops - GitOps for Quadlet](https://trly.github.io/quad-ops/)
+  * [trly/quad-ops - GitHub](https://github.com/trly/quad-ops)
