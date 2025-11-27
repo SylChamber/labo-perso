@@ -64,6 +64,7 @@ Voici la feuille de route au plan du _système_ ou de _k3s_. Les serveurs DNS et
 * **(fait)** [système] création d'un certificat pour le serveur (Cockpit)
 * [système] gestion de la configuration des services podman selon les principes GitOps avec Quad-Ops
   * FetchIt n'est pas maintenu, et le service CoreDNS stoppe à chaque nuit
+  * Contrairement à FetchIt, Quad-Ops crée des services systemd et c'est ce dernier qui assure la santé des services
   * installer [Quad-Ops](https://trly.github.io/quad-ops/)
   * convertir la configuration FetchIt
 * [k3s] serveur de certificats ACME
