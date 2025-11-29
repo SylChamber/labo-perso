@@ -1,0 +1,63 @@
+name: coredns
+
+configs:
+  Corefile:
+    content: |
+      .:53 {
+          log
+          errors
+          health
+          ready
+          forward . 24.200.241.37 24.201.245.77
+      }
+
+      internal:53 {
+          file /etc/coredns/internal.db
+          log
+          errors
+      }
+  internal.db:
+    content: |
+      ; Vérification du format:
+      ; apt install bind9-utils - zypper install bind-utils
+      ; named-checkzone internal internal.db
+
+      $ORIGIN internal.
+      $TTL 3600
+      @       IN      SOA     ns.internal. silicone95.proton.me. (
+                              2024030901  ; Serial
+                              7200        ; Refresh
+                              3600        ; Retry
+                              1209600     ; Expire
+                              3600 )      ; Negative Cache TTL
+
+      @                   IN      NS      ns.internal.
+      ns                  IN      A       192.168.50.115
+
+      arcade              IN      A       192.168.50.185
+      ai                  IN      CNAME   arcade.internal.
+      ia                  IN      CNAME   arcade.internal.
+
+      imprimante          IN      A       192.168.50.125
+      printer             IN      CNAME   imprimante.internal.
+      brother_hl_l2465dw  IN      CNAME   imprimante.internal.
+
+      motel               IN      A       192.168.50.115
+      ca                  IN      CNAME   motel.internal.
+      certificats         IN      CNAME   motel.internal.
+      cloud               IN      CNAME   motel.internal.
+      k3s                 IN      CNAME   motel.internal.
+      kubernetes          IN      CNAME   motel.internal.
+      nuage               IN      CNAME   motel.internal.
+
+      routeur             IN      A       192.168.50.1
+
+services:
+  coredns:
+    image: docker.io/coredns/coredns:1.13.1
+    configs:
+      - source: Corefile
+        target: /etc/coredns/Corefile
+      - source: internal.db
+        target: /etc/coredns/internal.db
+    network_mode: host
