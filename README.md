@@ -105,6 +105,20 @@ Voici la feuille de route au plan du _système_ ou de _k3s_. Les serveurs DNS et
   * évaluer les capacités de NextCloud
   * envisager Immich ou un autre produit libre
 
+## Envisager
+
+Envisager de louer un VPS pour héberger un serveur [HeadScale](https://headscale.net/) afin de faire un réseau de style `tailnet` [Tailscale](https://tailscale.com/) entre Internet et le VPS, et ainsi pouvoir exposer sur Internet le réseau personnel.
+
+* OVH offre un VPS à Montréal pour aussi peu que 5,53$ par mois
+* nécessiterait un reverse proxy, par ex. Caddy, et un serveur DNS (à investiguer)
+* offrirait la possibilité d'héberger un blogue (ex. Caddy en conteneur), ou d'autres applications
+
+Voir:
+
+* [HeadScale](https://headscale.net/)
+  * [Plans to implement Funnel? - HeadScale Issues](https://github.com/juanfont/headscale/issues/1040)
+* [Caddy Server](https://caddyserver.com/)
+
 ## Références
 
 * [Quadlet is the key tool that makes Podman better than Docker, and here's how to use it](https://www.xda-developers.com/quadlet-guide/)
