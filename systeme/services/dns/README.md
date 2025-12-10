@@ -1,6 +1,18 @@
 # Déploiement du serveur DNS CoreDNS
 
-## Déploiement de CoreDNS comme manifeste Kubernetes
+## Déploiement de CoreDNS à l'aide de Quad-Ops
+
+Cette section décrit le déploiement de CoreDNS à l'aide de Quad-Ops, un outil GitOps pour Podman.
+
+Contrairement à FetchIt, Quad-Ops ne prend pas en charge l'exécution et la surveillance des charges qu'il déploie: il configure les déploiements sous forme de services Podman Quadlet dans systemd. De cette façon, les services sont gérés de la même façon que les autres services du système.
+
+Quad-Ops nécessite un fichier de format `docker-compose.yaml`, qu'il convertira ensuite en services systemd.
+
+## Déploiement de CoreDNS à l'aide de FetchIt
+
+Cette section décrit le déploiement de CoreDNS à l'aide de FetchIt, l'outil GitOps pour Podman.
+
+### Déploiement de CoreDNS comme manifeste Kubernetes
 
 Le [manifeste YAML Kubernetes (coredns.yaml)](coredns.yaml) définit un pod et une configuration CoreDNS à déployer avec la syntaxe Kubernetes.
 
@@ -16,9 +28,9 @@ CoreDNS sera déployé comme pod avec:
 * un conteneur d'infrastructure
 * un volume créé selon le `ConfigMap` avec la configuration de CoreDNS
 
-## Configuration FetchIt
+### Configuration FetchIt
 
-La configuration FetchIt suivante est requis pour le déploiement:
+La configuration FetchIt suivante est requise pour le déploiement:
 
 ```yaml
 targetConfigs:
@@ -33,7 +45,7 @@ targetConfigs:
 
 Le dépôt sera inspecté à toutes les 3 minutes pour vérifier s'il y a des mises à jour.
 
-## Vérification
+### Vérification
 
 Pour vérifier le déploiement, lancer:
 
@@ -72,9 +84,9 @@ total 8
 -rw-r--r--. 1 root root 1016 25 sep 15:50 internal.db
 ```
 
-## Déploiement de CoreDNS comme Podman Quadlet
+### Déploiement de CoreDNS comme Podman Quadlet
 
-Un Podman Quadlet est un service systemd. Voir la [documentation sur le déploiement de CoreDNS](../../../docs/dns/README.md). Cette technique nécessite
+Un Podman Quadlet est un service systemd. Voir la [documentation sur le déploiement de CoreDNS](../../../docs/dns/README.md). Cette technique nécessite:
 
 * un dossier sur l'hôte configuré avec les bonnes permissions SELinux pour héberger la configuration de CoreDNS
 * une définition de service systemd pour déployer le pod en référençant la configuration
